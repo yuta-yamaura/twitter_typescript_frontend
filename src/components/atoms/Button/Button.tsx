@@ -1,15 +1,15 @@
+import { Button as AntdButton, type ButtonProps } from "antd";
 import type { ReactNode } from "react";
 
-type ButtonProps = {
-  type: "button" | "submit" | "reset";
+type AntdButtonProps = ButtonProps & {
   onClick?: () => void;
   children?: ReactNode;
 };
 
-export const Button = ({ children, onClick, type, ...props }: ButtonProps) => {
+export const Button = ({ children, onClick, ...props }: AntdButtonProps) => {
   return (
-    <button type={type} onClick={onClick} {...props}>
+    <AntdButton onClick={onClick} {...props}>
       {children}
-    </button>
+    </AntdButton>
   );
 };

@@ -85,7 +85,7 @@ export const SignUpPageView = ({}) => {
             />
             <InputField
               placeholder="080-1234-5678"
-              name="telephone_number"
+              name="telephoneNumber"
               type="text"
               register={form.register}
             />
@@ -95,14 +95,7 @@ export const SignUpPageView = ({}) => {
               type="password"
               register={form.register}
             />
-            <Button
-              type="submit"
-              onClick={() => {
-                console.log("ボタンクリック");
-              }}
-            >
-              サインアップ
-            </Button>
+            <Button htmlType="submit">サインアップ</Button>
           </form>
         </Space>
       </Space>
