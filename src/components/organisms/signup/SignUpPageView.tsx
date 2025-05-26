@@ -29,7 +29,7 @@ export const SignUpPageView = ({}) => {
     console.log("登録処理開始", data);
     try {
       const response = await instance.post("/api/users/register/", data);
-      setAuthToken(response.data);
+      setAuthToken({ token: response.data });
       message.success("登録が完了しました");
     } catch (error) {
       console.error("登録ERROR:", error);
@@ -71,31 +71,35 @@ export const SignUpPageView = ({}) => {
             <XLogoView width="80px" height="80px" />
           </Flex>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <InputField
-              placeholder="user name"
-              name="username"
-              type="text"
-              register={form.register}
-            />
-            <InputField
-              placeholder="test@gmail.com"
-              name="email"
-              type="email"
-              register={form.register}
-            />
-            <InputField
-              placeholder="080-1234-5678"
-              name="telephoneNumber"
-              type="text"
-              register={form.register}
-            />
-            <InputField
-              name="password"
-              placeholder="password"
-              type="password"
-              register={form.register}
-            />
-            <Button htmlType="submit">サインアップ</Button>
+            <Flex vertical gap="middle" style={{ width: "100%" }}>
+              <InputField
+                placeholder="user name"
+                name="username"
+                type="text"
+                register={form.register}
+              />
+
+              <InputField
+                placeholder="test@gmail.com"
+                name="email"
+                type="email"
+                register={form.register}
+              />
+
+              <InputField
+                placeholder="080-1234-5678"
+                name="telephoneNumber"
+                type="text"
+                register={form.register}
+              />
+              <InputField
+                name="password"
+                placeholder="password"
+                type="password"
+                register={form.register}
+              />
+              <Button htmlType="submit">サインアップ</Button>
+            </Flex>
           </form>
         </Space>
       </Space>
