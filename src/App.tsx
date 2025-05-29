@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { SignUpPageView } from "./components/organisms/signup/SignUpPageView";
 import { LoginPageView } from "./components/organisms/login/LoginPageView";
-import { Home } from "./components/organisms/tweet/Home";
+import { Home } from "./components/pages/Home";
 
 function App() {
   return (

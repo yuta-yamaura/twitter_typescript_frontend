@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 export const LoginPageView = ({}) => {
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const form = useForm<LoginForm>({
     defaultValues: {
@@ -28,11 +29,11 @@ export const LoginPageView = ({}) => {
     try {
       const response = await instance.post("/api/users/login/", data);
       setAuthToken({ token: response.data.access });
-      message.success("ログインが完了しました");
+      messageApi.success("ログインが完了しました");
       navigate("/");
     } catch (error) {
       console.error("ログインERROR:", error);
-      message.error("ログインに失敗しました");
+      messageApi.error("ログインに失敗しました");
     }
   };
 
@@ -71,6 +72,7 @@ export const LoginPageView = ({}) => {
           </Flex>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Flex vertical gap="middle" style={{ width: "100%" }}>
+              {contextHolder}
               <InputField
                 placeholder="user name"
                 name="username"

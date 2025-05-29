@@ -1,10 +1,12 @@
+import { type InputHTMLAttributes, type ReactNode } from "react";
 import type { UseFormRegister } from "react-hook-form";
 
-type InputFieldProps = {
+type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   name: string;
   placeholder?: string;
-  type: string;
+  type: string | "file";
   register: UseFormRegister<any>;
+  children?: ReactNode;
 };
 
 export const InputField = ({
@@ -12,14 +14,31 @@ export const InputField = ({
   placeholder,
   type,
   register,
+  children,
+  ...props
 }: InputFieldProps) => {
+  if (type === "file") {
+    return (
+      <label>
+        <input
+          id={name}
+          type={type}
+          className="hidden"
+          {...register(name, { required: "この項目は必須です。" })}
+          {...props}
+        />
+        {children}
+      </label>
+    );
+  }
+
   return (
     <input
       id={name}
       placeholder={placeholder}
       type={type}
-      className="border rounded w-full shadow py-3 px-4 text-gray-700 leading-tight"
       {...register(name, { required: "この項目は必須です。" })}
+      {...props}
     />
   );
 };

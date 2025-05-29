@@ -13,6 +13,7 @@ import type { z } from "zod";
 import { Button } from "../../atoms/Button/Button";
 
 export const SignUpPageView = ({}) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const form = useForm<SignUpForm>({
     defaultValues: {
       username: "",
@@ -26,14 +27,13 @@ export const SignUpPageView = ({}) => {
   const onSubmit: SubmitHandler<z.infer<typeof SignUpSchema>> = async (
     data
   ) => {
-    console.log("登録処理開始", data);
     try {
       const response = await instance.post("/api/users/register/", data);
       setAuthToken({ token: response.data });
-      message.success("登録が完了しました");
+      messageApi.success("登録が完了しました");
     } catch (error) {
       console.error("登録ERROR:", error);
-      message.error("ユーザーの作成に失敗しました");
+      messageApi.error("ユーザーの作成に失敗しました");
     }
   };
 
@@ -72,6 +72,7 @@ export const SignUpPageView = ({}) => {
           </Flex>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Flex vertical gap="middle" style={{ width: "100%" }}>
+              {contextHolder}
               <InputField
                 placeholder="user name"
                 name="username"
