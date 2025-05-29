@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { instance } from "../../../utils/client";
-import { Flex, message, Pagination, Space } from "antd";
+import { Flex, message, Pagination } from "antd";
 
 type Tweet = {
   id: number;
@@ -54,6 +54,7 @@ export const TweetsList = () => {
 
   return (
     <div>
+      {contextHolder}
       {tweets?.map((tweet) => (
         <Flex
           key={tweet.id}
