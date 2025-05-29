@@ -1,6 +1,7 @@
 import { Layout, theme } from "antd";
 import { Addtweet } from "../../molecules/layouts/Addtweet";
 import { Sidebar } from "../../molecules/layouts/Sidebar";
+import { TweetsList } from "../../molecules/layouts/TweetsList";
 
 export const HomeTweets = () => {
   const { Header, Footer, Content } = Layout;
@@ -16,29 +17,26 @@ export const HomeTweets = () => {
         justifyContent: "center",
         width: "50%",
         paddingLeft: "22%",
-        height: "100vh",
+        minHeight: "100vh",
       }}
     >
-      <Layout style={{ height: "100%" }}>
+      <Layout style={{ minHeight: "100%" }}>
         <Sidebar />
         <Layout>
           <Header style={{ padding: 0, background: colorBgContainer }} />
           <Content
-            style={{ margin: "24px 16px 0", height: "calc(100vh - 64px)" }}
+            style={{
+              margin: "24px 16px 0",
+              background: colorBgContainer,
+              borderRadius: borderRadiusLG,
+              padding: 24,
+              overflow: "auto",
+            }}
           >
-            <div
-              style={{
-                padding: 24,
-                minHeight: 360,
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-                height: "100%",
-              }}
-            >
-              <Addtweet />
-            </div>
+            <Addtweet />
+            <TweetsList />
           </Content>
-          <Footer style={{ textAlign: "center" }}>
+          <Footer style={{ textAlign: "center", padding: "12px 0" }}>
             X Clone ©{new Date().getFullYear()} Created by Yuta
           </Footer>
         </Layout>
