@@ -1,11 +1,6 @@
-import type { CSSProperties } from "react";
+import type { Icon } from "../../types/Icon";
 
-type XLogoView = {
-  width: CSSProperties["width"];
-  height: CSSProperties["height"];
-};
-
-export const XLogoView = ({ width = "24px", height = "24px" }: XLogoView) => {
+export const XLogoView = ({ width = "24px", height = "24px" }: Icon) => {
   return (
     <div style={{ width, height }}>
       <svg

@@ -14,7 +14,8 @@ export const setAuthToken = ({ token }: TokenProps) => {
 };
 
 export const getAuthToken = () => {
-  Cookies.get(COOKIE_AUTH_KEY);
+  const token = Cookies.get(COOKIE_AUTH_KEY);
+  return token;
 };
 
 export const removeToken = () => {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emailSchema, stringSchema, telephoneNumberSchema } from "./validation";
+import { emailSchema, stringSchema, telephoneNumberSchema } from "./Validation";
 
 export const SignUpSchema = z.object({
   username: stringSchema,
