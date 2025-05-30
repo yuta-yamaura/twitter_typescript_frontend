@@ -5,9 +5,9 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { instance } from "../../../utils/client";
-import { TweetSchema, type TweetForm } from "../../../schema/Tweet";
 import { getAuthToken } from "../../../utils/auth";
 import { Image } from "../../atoms/Image";
+import { TweetSchema, type TweetForm } from "../../../schema/TweetSchema";
 
 export const Addtweet = () => {
   const token = getAuthToken();

@@ -1,16 +1,8 @@
 import { useEffect, useState } from "react";
 import { instance } from "../../../utils/client";
 import { Flex, message, Pagination } from "antd";
-
-type Tweet = {
-  id: number;
-  username: string;
-  account_name?: string;
-  content: string;
-  image?: string | null;
-  user_image: string;
-  created_at: string;
-};
+import { Link } from "react-router-dom";
+import type { Tweet } from "../../../types/Tweet";
 
 type PaginatedResponse = {
   count: number;
@@ -32,7 +24,6 @@ export const TweetsList = () => {
       const res = await instance.get<PaginatedResponse>(
         `/api/tweets/?limit=${pageSize}&offset=${offset}`
       );
-      console.log(res);
       setTotal(res.data.count);
       setTweets(res.data.results);
     } catch (error) {
@@ -85,26 +76,32 @@ export const TweetsList = () => {
             />
 
             <div style={{ paddingLeft: "8px" }}>
-              <strong>{tweet.account_name && tweet.account_name}</strong>
-              <span> @{tweet.username}</span>
-              <Flex>{tweet.content}</Flex>
-              {tweet.image && (
-                <Flex
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src={tweet.image}
+              <Link
+                to={`/tweet/${tweet.id}`}
+                style={{ textDecoration: "None", color: "inherit" }}
+              >
+                <strong>{tweet.account_name && tweet.account_name}</strong>
+                <span> @{tweet.username}</span>
+                <Flex>{tweet.content}</Flex>
+                {tweet.image && (
+                  <Flex
                     style={{
-                      maxWidth: "100%",
-                      maxHeight: "300px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                  />
-                </Flex>
-              )}
+                  >
+                    <img
+                      src={tweet.image}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "300px",
+                        borderRadius: "20px",
+                      }}
+                    />
+                  </Flex>
+                )}
+              </Link>
             </div>
           </Flex>
         </Flex>
