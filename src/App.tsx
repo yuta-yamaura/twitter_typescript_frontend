@@ -3,6 +3,7 @@ import { SignUpPageView } from "./components/organisms/signup/SignUpPageView";
 import { LoginPageView } from "./components/organisms/login/LoginPageView";
 import { Home } from "./components/pages/Home";
 import { TweetDetail } from "./components/molecules/layouts/TweetDetail";
+import { UserProfile } from "./components/molecules/layouts/UserProfile";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/signup" element={<SignUpPageView />} />
         <Route path="/login" element={<LoginPageView />} />
         <Route path="/tweet/:id" element={<TweetDetail />} />
+        <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>

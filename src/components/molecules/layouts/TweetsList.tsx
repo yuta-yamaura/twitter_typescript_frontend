@@ -62,28 +62,35 @@ export const TweetsList = () => {
               paddingBottom: "12px",
             }}
           >
-            <img
-              src={
-                tweet.user_image
-                  ? tweet.user_image
-                  : "../../../人物アイコン.png"
-              }
-              style={{
-                width: "45px",
-                height: "45px",
-                borderRadius: "50%",
-              }}
-            />
+            <Link
+              to={`/user/${tweet.user.id}`}
+              style={{ textDecoration: "None", color: "inherit" }}
+            >
+              <img
+                src={
+                  tweet.user.image
+                    ? tweet.user.image
+                    : "../../../人物アイコン.png"
+                }
+                style={{
+                  width: "45px",
+                  height: "45px",
+                  borderRadius: "50%",
+                }}
+              />
+            </Link>
 
             <div style={{ paddingLeft: "8px" }}>
               <Link
                 to={`/tweet/${tweet.id}`}
                 style={{ textDecoration: "None", color: "inherit" }}
               >
-                <strong>{tweet.account_name && tweet.account_name}</strong>
-                <span> @{tweet.username}</span>
+                <strong>
+                  {tweet.user.accountName && tweet.user.accountName}
+                </strong>
+                <span> @{tweet.user.username}</span>
                 <Flex>{tweet.content}</Flex>
-                {tweet.image && (
+                {tweet.tweetImage && (
                   <Flex
                     style={{
                       display: "flex",
@@ -92,7 +99,7 @@ export const TweetsList = () => {
                     }}
                   >
                     <img
-                      src={tweet.image}
+                      src={tweet.tweetImage}
                       style={{
                         maxWidth: "100%",
                         maxHeight: "300px",

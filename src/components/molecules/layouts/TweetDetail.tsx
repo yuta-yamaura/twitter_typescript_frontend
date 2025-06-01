@@ -47,8 +47,8 @@ export const TweetDetail = () => {
               <Flex style={{ display: "flex" }}>
                 <img
                   src={
-                    tweet?.user_image
-                      ? tweet.user_image
+                    tweet?.user.image
+                      ? tweet.user.image
                       : "../../../人物アイコン.png"
                   }
                   style={{
@@ -58,14 +58,16 @@ export const TweetDetail = () => {
                   }}
                 />
                 <div style={{ marginLeft: "8px" }}>
-                  <strong>{tweet?.account_name && tweet.account_name}</strong>
-                  <Flex> @{tweet?.username && tweet.username}</Flex>
+                  <strong>
+                    {tweet?.user.accountName && tweet.user.accountName}
+                  </strong>
+                  <Flex> @{tweet?.user.username && tweet.user.username}</Flex>
                 </div>
               </Flex>
               <Flex style={{ margin: "12px 0px" }}>
                 {tweet?.content && tweet.content}
               </Flex>
-              {tweet?.image && (
+              {tweet?.tweetImage && (
                 <Flex
                   style={{
                     display: "flex",
@@ -74,7 +76,7 @@ export const TweetDetail = () => {
                   }}
                 >
                   <img
-                    src={tweet.image}
+                    src={tweet.tweetImage}
                     style={{
                       maxWidth: "100%",
                       maxHeight: "300px",
@@ -84,8 +86,8 @@ export const TweetDetail = () => {
                 </Flex>
               )}
               <Flex>
-                {tweet?.created_at &&
-                  dayjs(tweet.created_at).format("YYYY年M月DD日 HH:mm")}
+                {tweet?.createdAt &&
+                  dayjs(tweet.createdAt).format("YYYY年M月D日 HH:mm")}
               </Flex>
             </div>
           </Flex>
