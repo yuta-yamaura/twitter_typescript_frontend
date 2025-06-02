@@ -8,8 +8,10 @@ export type User = {
   backgroundImage: string;
   username: string;
   email: string;
-  user_image: string;
   selfIntroduction: string;
+  dateOfBirth: string;
+  address: string;
+  webSite: string;
   isAdmin: boolean;
   createdAt: string;
   tweets?: Tweet[];
