@@ -177,89 +177,101 @@ export const UserProfile = () => {
                   }}
                 >
                   <div>
-                    <Link
-                      to={`/user/${tweet.user.id}`}
-                      style={{ textDecoration: "None", color: "inherit" }}
-                    >
-                      <img
-                        src={
-                          tweet.user.image
-                            ? tweet.user.image
-                            : "../../../人物アイコン.png"
-                        }
-                        style={{
-                          width: "45px",
-                          height: "45px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </Link>
-                  </div>
-                  <div>
                     <div key={tweet.id} style={{ paddingLeft: "8px" }}>
                       <div
                         style={{
                           display: "flex",
-                          justifyContent: "space-between",
                         }}
                       >
-                        <div>
-                          <strong>
-                            {user?.accountName && user.accountName}
-                          </strong>
-                          <span> @{user?.username && user.username}</span>
-                          <span>
-                            {" "}
-                            {user?.createdAt &&
-                              dayjs(user.createdAt).format("YYYY年M月D日")}
-                          </span>
-                        </div>
-                        <Popover
-                          content={
-                            <div onClick={() => deleteTweet(tweet.id)} style={{cursor: "pointer"}}>
-                              削除
-                            </div>
-                          }
-                          trigger="click"
-                          open={openPopovers[tweet.id]}
-                          onOpenChange={(newOpen) =>
-                            handleOpenChange(tweet.id, newOpen)
-                          }
+                        <Link
+                          to={`/user/${tweet.user.id}`}
+                          style={{ textDecoration: "None", color: "inherit" }}
                         >
-                          <Button type="text">
-                            <DashOutline
-                              width="24px"
-                              height="24px"
-                              style={{ justifyContent: "end" }}
-                            />
-                          </Button>
-                        </Popover>
-                      </div>
-                      <Link
-                        to={`/tweet/${tweet.id}`}
-                        style={{ textDecoration: "None", color: "inherit" }}
-                      >
-                        <div key={tweet.id} style={{ paddingLeft: "8px" }}>
-                          <Flex>{tweet.content}</Flex>
-                          {tweet.tweetImage && (
-                            <Flex
-                              style={{
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
+                          <img
+                            src={
+                              tweet.user.image
+                                ? tweet.user.image
+                                : "../../../人物アイコン.png"
+                            }
+                            style={{
+                              width: "45px",
+                              height: "45px",
+                              borderRadius: "50%",
+                              marginRight: "8px",
+                            }}
+                          />
+                        </Link>
+
+                        <div style={{ width: "100%" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div>
+                              <strong>
+                                {user?.accountName && user.accountName}
+                              </strong>
+                              <span> @{user?.username && user.username}</span>
+                              <span>
+                                {" "}
+                                {user?.createdAt &&
+                                  dayjs(user.createdAt).format("YYYY年M月D日")}
+                              </span>
+                            </div>
+                            <Popover
+                              content={
+                                <div
+                                  onClick={() => deleteTweet(tweet.id)}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  削除
+                                </div>
+                              }
+                              trigger="click"
+                              open={openPopovers[tweet.id]}
+                              onOpenChange={(newOpen) =>
+                                handleOpenChange(tweet.id, newOpen)
+                              }
                             >
-                              <img
-                                src={tweet.tweetImage}
-                                style={{
-                                  maxWidth: "100%",
-                                  maxHeight: "300px",
-                                  borderRadius: "20px",
-                                }}
-                              />
-                            </Flex>
-                          )}
+                              <Button type="text" style={{ padding: 0 }}>
+                                <DashOutline
+                                  width="24px"
+                                  height="24px"
+                                  style={{ justifyContent: "end" }}
+                                />
+                              </Button>
+                            </Popover>
+                          </div>
+                          <Link
+                            to={`/tweet/${tweet.id}`}
+                            style={{ textDecoration: "None", color: "inherit" }}
+                          >
+                            <div key={tweet.id}>
+                              <Flex>{tweet.content}</Flex>
+                              {tweet.tweetImage && (
+                                <Flex
+                                  style={{
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <img
+                                    src={tweet.tweetImage}
+                                    style={{
+                                      maxWidth: "100%",
+                                      maxHeight: "300px",
+                                      borderRadius: "20px",
+                                    }}
+                                  />
+                                </Flex>
+                              )}
+                            </div>
+                          </Link>
                         </div>
-                      </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
