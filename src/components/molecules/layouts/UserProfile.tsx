@@ -1,4 +1,4 @@
-import { Flex, message } from "antd";
+import { Flex, message, Popover } from "antd";
 import { useParams } from "react-router-dom";
 import { instance } from "../../../utils/client";
 import { useEffect, useState } from "react";
@@ -9,14 +9,27 @@ import { Link } from "react-router-dom";
 import { Button } from "../../atoms/Button/Button";
 import { UserProfileUpdateModal } from "../modals/UserProfileUpdateModal";
 import { Loading } from "../loading/Loading";
+import { DashOutline } from "../../atoms/DashOutline";
+import { getAuthToken } from "../../../utils/auth";
 
 export const UserProfile = () => {
+  const token = getAuthToken();
   const { id } = useParams();
   const [user, setUser] = useState<User>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // 削除のpopover
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
+
+  const handleOpenChange = (tweetId: number, newOpen: boolean) => {
+    setOpenPopovers((prev) => ({
+      ...prev,
+      [tweetId]: newOpen,
+    }));
+  };
 
   const fetchUserProfile = async () => {
     try {
@@ -30,9 +43,24 @@ export const UserProfile = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
+  const deleteTweet = async (id: number) => {
+    try {
+      setIsLoading(true);
+      await instance.delete<User>(`/api/tweets/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      messageApi.success("ツイートを削除しました");
+      // 最新のツイートを取得
+      await fetchUserProfile();
+    } catch (e) {
+      messageApi.error("ツイートの削除に失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchUserProfile();
@@ -133,73 +161,109 @@ export const UserProfile = () => {
             </div>
 
             {user?.tweets?.map((tweet) => (
-              <Flex
+              <div
                 key={tweet.id}
                 style={{
                   border: "solid 1px",
                   borderColor: "#f5f5f5",
+                  width: "100%",
+                  maxWidth: "600px",
+                  margin: "0 auto",
                 }}
               >
-                <Flex
+                <div
                   style={{
-                    display: "flex",
-                    paddingTop: "12px",
-                    paddingLeft: "16px",
-                    paddingBottom: "12px",
+                    padding: "12px 16px",
                   }}
                 >
-                  <Link
-                    to={`/user/${tweet.user.id}`}
-                    style={{ textDecoration: "None", color: "inherit" }}
-                  >
-                    <img
-                      src={
-                        tweet.user.image
-                          ? tweet.user.image
-                          : "../../../人物アイコン.png"
-                      }
-                      style={{
-                        width: "45px",
-                        height: "45px",
-                        borderRadius: "50%",
-                      }}
-                    />
-                  </Link>
-                  <div key={tweet.id} style={{ paddingLeft: "8px" }}>
+                  <div>
                     <Link
-                      to={`/tweet/${user?.id}`}
+                      to={`/user/${tweet.user.id}`}
                       style={{ textDecoration: "None", color: "inherit" }}
                     >
-                      <strong>{user?.accountName && user.accountName}</strong>
-                      <span> @{user?.username && user.username}</span>
-                      <span>
-                        {" "}
-                        {user?.createdAt &&
-                          dayjs(user.createdAt).format("YYYY年M月D日")}
-                      </span>
-                      <Flex>{tweet.content}</Flex>
-                      {tweet.tweetImage && (
-                        <Flex
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <img
-                            src={tweet.tweetImage}
-                            style={{
-                              maxWidth: "100%",
-                              maxHeight: "300px",
-                              borderRadius: "20px",
-                            }}
-                          />
-                        </Flex>
-                      )}
+                      <img
+                        src={
+                          tweet.user.image
+                            ? tweet.user.image
+                            : "../../../人物アイコン.png"
+                        }
+                        style={{
+                          width: "45px",
+                          height: "45px",
+                          borderRadius: "50%",
+                        }}
+                      />
                     </Link>
                   </div>
-                </Flex>
-              </Flex>
+                  <div>
+                    <div key={tweet.id} style={{ paddingLeft: "8px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <strong>
+                            {user?.accountName && user.accountName}
+                          </strong>
+                          <span> @{user?.username && user.username}</span>
+                          <span>
+                            {" "}
+                            {user?.createdAt &&
+                              dayjs(user.createdAt).format("YYYY年M月D日")}
+                          </span>
+                        </div>
+                        <Popover
+                          content={
+                            <div onClick={() => deleteTweet(tweet.id)} style={{cursor: "pointer"}}>
+                              削除
+                            </div>
+                          }
+                          trigger="click"
+                          open={openPopovers[tweet.id]}
+                          onOpenChange={(newOpen) =>
+                            handleOpenChange(tweet.id, newOpen)
+                          }
+                        >
+                          <Button type="text">
+                            <DashOutline
+                              width="24px"
+                              height="24px"
+                              style={{ justifyContent: "end" }}
+                            />
+                          </Button>
+                        </Popover>
+                      </div>
+                      <Link
+                        to={`/tweet/${tweet.id}`}
+                        style={{ textDecoration: "None", color: "inherit" }}
+                      >
+                        <div key={tweet.id} style={{ paddingLeft: "8px" }}>
+                          <Flex>{tweet.content}</Flex>
+                          {tweet.tweetImage && (
+                            <Flex
+                              style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <img
+                                src={tweet.tweetImage}
+                                style={{
+                                  maxWidth: "100%",
+                                  maxHeight: "300px",
+                                  borderRadius: "20px",
+                                }}
+                              />
+                            </Flex>
+                          )}
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}

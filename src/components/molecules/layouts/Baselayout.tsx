@@ -17,8 +17,8 @@ export const Baselayout = ({ children }: BaselayoutProps) => {
       style={{
         display: "flex",
         justifyContent: "center",
-        width: "50%",
-        paddingLeft: "22%",
+        width: "42%",
+        paddingLeft: "20%",
         minHeight: "100vh",
       }}
     >
@@ -28,7 +28,6 @@ export const Baselayout = ({ children }: BaselayoutProps) => {
           <Header style={{ padding: 0, background: colorBgContainer }} />
           <Content
             style={{
-              margin: "24px 16px 0",
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
               padding: 24,
