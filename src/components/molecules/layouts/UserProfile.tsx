@@ -33,8 +33,11 @@ export const UserProfile = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await instance.get<User>(`/api/users/profile/${id}/`);
-      console.log(res);
+      const res = await instance.get<User>(`/api/users/profile/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setUser(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");

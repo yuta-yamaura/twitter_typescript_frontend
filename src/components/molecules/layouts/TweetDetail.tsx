@@ -5,15 +5,21 @@ import type { Tweet } from "../../../types/Tweet";
 import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
+import { getAuthToken } from "../../../utils/auth";
 
 export const TweetDetail = () => {
+  const token = getAuthToken();
   const { id } = useParams();
   const [tweet, setTweet] = useState<Tweet>();
   const [messageApi, contextHolder] = message.useMessage();
 
   const fetchTweetDetail = async () => {
     try {
-      const res = await instance.get<Tweet>(`/api/tweets/${id}/`);
+      const res = await instance.get<Tweet>(`/api/tweets/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTweet(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");

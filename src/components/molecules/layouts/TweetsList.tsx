@@ -4,6 +4,7 @@ import { Flex, message, Pagination } from "antd";
 import { Link } from "react-router-dom";
 import type { Tweet } from "../../../types/Tweet";
 import { Loading } from "../loading/Loading";
+import { getAuthToken } from "../../../utils/auth";
 
 type PaginatedResponse = {
   count: number;
@@ -13,6 +14,7 @@ type PaginatedResponse = {
 };
 
 export const TweetsList = () => {
+  const token = getAuthToken();
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -24,7 +26,12 @@ export const TweetsList = () => {
     try {
       const offset = (page - 1) * pageSize;
       const res = await instance.get<PaginatedResponse>(
-        `/api/tweets/?limit=${pageSize}&offset=${offset}`
+        `/api/tweets/?limit=${pageSize}&offset=${offset}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setTotal(res.data.count);
       setTweets(res.data.results);
