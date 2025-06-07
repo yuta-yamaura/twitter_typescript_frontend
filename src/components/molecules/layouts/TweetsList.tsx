@@ -5,13 +5,12 @@ import { Link } from "react-router-dom";
 import type { Tweet } from "../../../types/Tweet";
 import { Loading } from "../loading/Loading";
 import { getAuthToken } from "../../../utils/auth";
-
-type PaginatedResponse = {
-  count: number;
-  next: string;
-  previous: string | null;
-  results: Tweet[];
-};
+import dayjs from "dayjs";
+import { Button } from "../../atoms/Button/Button";
+import { DashOutline } from "../../atoms/DashOutline";
+import { Message } from "../../atoms/Message";
+import { CommentCreateModal } from "../modals/CommentCreateModal";
+import type { PaginatedResponse } from "../../../types/PaginatedResponse";
 
 export const TweetsList = () => {
   const token = getAuthToken();
@@ -21,11 +20,14 @@ export const TweetsList = () => {
   const [total, setTotal] = useState<number>();
   const pageSize = 5;
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTweet, setSelectedTweet] = useState<Tweet>();
+  const [loading, setLoading] = useState(false);
 
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
-      const res = await instance.get<PaginatedResponse>(
+      const res = await instance.get<PaginatedResponse<Tweet>>(
         `/api/tweets/?limit=${pageSize}&offset=${offset}`,
         {
           headers: {
@@ -54,79 +56,149 @@ export const TweetsList = () => {
     setCurrentPage(page);
   };
 
+  const handleOpenModal = (tweet: Tweet) => {
+    setSelectedTweet(tweet);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setIsModalOpen(false);
+    }, 1000);
+    // fetchUserProfile();
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div>
+    <>
       {isLoading ? (
         <Loading />
       ) : (
         <div>
           {contextHolder}
           {tweets?.map((tweet) => (
-            <Flex
+            <div
               key={tweet.id}
               style={{
                 border: "solid 1px",
                 borderColor: "#f5f5f5",
+                width: "100%",
+                maxWidth: "600px",
+                margin: "0 auto",
               }}
             >
-              <Flex
+              <div
                 style={{
-                  display: "flex",
-                  paddingTop: "12px",
-                  paddingLeft: "16px",
-                  paddingBottom: "12px",
+                  padding: "12px 16px",
                 }}
               >
-                <Link
-                  to={`/user/${tweet.user.id}`}
-                  style={{ textDecoration: "None", color: "inherit" }}
-                >
-                  <img
-                    src={
-                      tweet.user.image
-                        ? tweet.user.image
-                        : "../../../人物アイコン.png"
-                    }
+                <div>
+                  <div
                     style={{
-                      width: "45px",
-                      height: "45px",
-                      borderRadius: "50%",
+                      display: "flex",
                     }}
-                  />
-                </Link>
-
-                <div style={{ paddingLeft: "8px" }}>
-                  <Link
-                    to={`/tweet/${tweet.id}`}
-                    style={{ textDecoration: "None", color: "inherit" }}
                   >
-                    <strong>
-                      {tweet.user.accountName && tweet.user.accountName}
-                    </strong>
-                    <span> @{tweet.user.username}</span>
-                    <Flex>{tweet.content}</Flex>
-                    {tweet.tweetImage && (
-                      <Flex
+                    <Link
+                      to={`/user/${tweet.user.id}`}
+                      style={{ textDecoration: "None", color: "inherit" }}
+                    >
+                      <img
+                        src={
+                          tweet.user.image
+                            ? tweet.user.image
+                            : "../../../人物アイコン.png"
+                        }
+                        style={{
+                          width: "45px",
+                          height: "45px",
+                          borderRadius: "50%",
+                          marginRight: "8px",
+                        }}
+                      />
+                    </Link>
+                    <div style={{ width: "100%" }}>
+                      <div
                         style={{
                           display: "flex",
+                          justifyContent: "space-between",
                           alignItems: "center",
-                          justifyContent: "center",
                         }}
                       >
-                        <img
-                          src={tweet.tweetImage}
-                          style={{
-                            maxWidth: "100%",
-                            maxHeight: "300px",
-                            borderRadius: "20px",
-                          }}
-                        />
-                      </Flex>
-                    )}
-                  </Link>
+                        <div>
+                          <strong>
+                            {tweet.user.accountName && tweet.user.accountName}
+                          </strong>
+                          <span> @{tweet.user.username}</span>
+                          <span>
+                            {" "}
+                            {tweet.user?.createdAt &&
+                              dayjs(tweet.user.createdAt).format(
+                                "YYYY年M月D日"
+                              )}
+                          </span>
+                        </div>
+                        <Button type="text" style={{ padding: 0 }}>
+                          <DashOutline
+                            width="24px"
+                            height="24px"
+                            style={{ justifyContent: "end" }}
+                          />
+                        </Button>
+                      </div>
+                      <Link
+                        to={`/tweet/${tweet.id}`}
+                        style={{ textDecoration: "None", color: "inherit" }}
+                      >
+                        <div key={tweet.id}>
+                          <Flex>{tweet.content}</Flex>
+                          {tweet.tweetImage && (
+                            <Flex
+                              style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <img
+                                src={tweet.tweetImage}
+                                style={{
+                                  maxWidth: "100%",
+                                  maxHeight: "300px",
+                                  borderRadius: "20px",
+                                  marginTop: "8px",
+                                }}
+                              />
+                            </Flex>
+                          )}
+                        </div>
+                      </Link>
+                      <div style={{ paddingTop: "8px" }}>
+                        <Button
+                          type="text"
+                          onClick={() => handleOpenModal(tweet)}
+                          style={{ padding: 0 }}
+                        >
+                          <Message width={"22px"} height={"22px"} />
+                        </Button>
+                        {selectedTweet?.id === tweet.id && (
+                          <CommentCreateModal
+                            tweet={tweet}
+                            loading={loading}
+                            isModalOpen={isModalOpen}
+                            handleOk={handleOk}
+                            handleCancel={handleCancel}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </Flex>
-            </Flex>
+              </div>
+            </div>
           ))}
           <div
             style={{
@@ -144,6 +216,6 @@ export const TweetsList = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
