@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { instance } from "../../../utils/client";
+import { authInstance } from "../../../utils/client";
 import { Flex, message, Pagination } from "antd";
 import { Link } from "react-router-dom";
 import type { Tweet } from "../../../types/Tweet";
 import { Loading } from "../loading/Loading";
-import { getAuthToken } from "../../../utils/auth";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
 import { DashOutline } from "../../atoms/DashOutline";
@@ -17,7 +16,6 @@ type PaginatedResponse = {
 };
 
 export const TweetsList = () => {
-  const token = getAuthToken();
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -28,14 +26,7 @@ export const TweetsList = () => {
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
-      const res = await instance.get<PaginatedResponse>(
-        `/api/tweets/?limit=${pageSize}&offset=${offset}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await authInstance.get<PaginatedResponse>(`/api/tweets/?limit=${pageSize}&offset=${offset}`);
       setTotal(res.data.count);
       setTweets(res.data.results);
     } catch (error) {
@@ -48,10 +39,6 @@ export const TweetsList = () => {
   useEffect(() => {
     fetchTweet(currentPage);
   }, [currentPage]);
-
-  useEffect(() => {
-    console.log(tweets);
-  }, [tweets]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -90,7 +77,7 @@ export const TweetsList = () => {
                       src={
                         tweet.user.image
                           ? tweet.user.image
-                          : "../../../人物アイコン.png"
+                          : "../../../defaultAccountImage.png"
                       }
                       style={{
                         width: "45px",
@@ -109,7 +96,7 @@ export const TweetsList = () => {
                       >
                         <div>
                           <strong>
-                            {tweet.user.accountName && tweet.user.accountName}
+                            {tweet.user.accountName ?? "DefaultName"}
                           </strong>
                           <span> @{tweet.user.username}</span>
                           <span>
@@ -134,7 +121,7 @@ export const TweetsList = () => {
                       >
                         <div key={tweet.id}>
                           <Flex>{tweet.content}</Flex>
-                          {tweet.tweetImage && (
+                          {tweet.image && (
                             <Flex
                               style={{
                                 alignItems: "center",
@@ -142,7 +129,7 @@ export const TweetsList = () => {
                               }}
                             >
                               <img
-                                src={tweet.tweetImage}
+                                src={tweet.image}
                                 style={{
                                   maxWidth: "100%",
                                   maxHeight: "300px",

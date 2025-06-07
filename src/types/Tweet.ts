@@ -4,6 +4,6 @@ export type Tweet = {
   id: number;
   user: User;
   content: string;
-  tweetImage?: string | null;
+  image?: string | null;
   createdAt: string;
 };

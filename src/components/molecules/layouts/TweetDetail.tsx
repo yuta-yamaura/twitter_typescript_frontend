@@ -1,17 +1,15 @@
 import { Flex, message } from "antd";
 import { useParams } from "react-router-dom";
-import { instance } from "../../../utils/client";
+import { authInstance } from "../../../utils/client";
 import type { Tweet } from "../../../types/Tweet";
 import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
-import { getAuthToken } from "../../../utils/auth";
 import { Button } from "../../atoms/Button/Button";
 import { DashOutline } from "../../atoms/DashOutline";
 import { Loading } from "../loading/Loading";
 
 export const TweetDetail = () => {
-  const token = getAuthToken();
   const { id } = useParams();
   const [tweet, setTweet] = useState<Tweet>();
   const [messageApi, contextHolder] = message.useMessage();
@@ -19,11 +17,7 @@ export const TweetDetail = () => {
 
   const fetchTweetDetail = async () => {
     try {
-      const res = await instance.get<Tweet>(`/api/tweets/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await authInstance.get<Tweet>(`/api/tweets/${id}/`);
       setTweet(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -71,7 +65,7 @@ export const TweetDetail = () => {
                       src={
                         tweet?.user.image
                           ? tweet.user.image
-                          : "../../../人物アイコン.png"
+                          : "../../../defaultAccountImage.png"
                       }
                       style={{
                         width: "45px",
@@ -82,7 +76,7 @@ export const TweetDetail = () => {
                     />
                     <div>
                       <strong>
-                        {tweet?.user.accountName && tweet.user.accountName}
+                        {tweet?.user.accountName ?? "DefaultName"}
                       </strong>
                       <Flex>
                         {" "}
@@ -101,7 +95,7 @@ export const TweetDetail = () => {
                 <Flex style={{ marginTop: "8px" }}>
                   {tweet?.content && tweet.content}
                 </Flex>
-                {tweet?.tweetImage && (
+                {tweet?.image && (
                   <Flex
                     style={{
                       alignItems: "center",
@@ -109,7 +103,7 @@ export const TweetDetail = () => {
                     }}
                   >
                     <img
-                      src={tweet.tweetImage}
+                      src={tweet.image}
                       style={{
                         maxWidth: "100%",
                         maxHeight: "300px",
