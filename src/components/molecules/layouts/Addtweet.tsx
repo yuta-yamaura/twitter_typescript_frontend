@@ -5,13 +5,17 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { instance } from "../../../utils/client";
-import { TweetSchema, type TweetForm } from "../../../schema/Tweet";
 import { getAuthToken } from "../../../utils/auth";
 import { Image } from "../../atoms/Image";
+import { TweetSchema, type TweetForm } from "../../../schema/TweetSchema";
+import { TweetsList } from "./TweetsList";
+import { useState } from "react";
+import { Loading } from "../loading/Loading";
 
 export const Addtweet = () => {
   const token = getAuthToken();
   const [messageApi, contextHolder] = message.useMessage();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<TweetForm>({
     defaultValues: {
@@ -24,6 +28,7 @@ export const Addtweet = () => {
 
   const onSubmit: SubmitHandler<z.infer<typeof TweetSchema>> = async (data) => {
     try {
+      setIsLoading(true);
       const formData = new FormData();
       formData.append("user", data.user);
       formData.append("content", data.content);
@@ -38,9 +43,12 @@ export const Addtweet = () => {
         },
       });
       form.reset();
+      setIsLoading(false);
       messageApi.success("ポストが完了しました");
     } catch (error) {
       messageApi.error("ポストが失敗しました");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,6 +81,7 @@ export const Addtweet = () => {
           </Flex>
         </Flex>
       </form>
+      {isLoading ? <Loading /> : <TweetsList />}
     </>
   );
 };

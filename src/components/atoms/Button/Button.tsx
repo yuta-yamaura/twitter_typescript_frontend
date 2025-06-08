@@ -3,6 +3,9 @@ import type { ReactNode } from "react";
 
 type AntdButtonProps = ButtonProps & {
   onClick?: () => void;
+  isModalOpen?: boolean;
+  handleOk?: () => void;
+  onCancel?: () => void;
   children?: ReactNode;
 };
 

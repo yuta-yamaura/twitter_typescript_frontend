@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { InputField } from "../../molecules/forms/InputField";
 import type { z } from "zod";
 import { Button } from "../../atoms/Button/Button";
+import "@ant-design/v5-patch-for-react-19";
 
 export const SignUpPageView = ({}) => {
   const [messageApi, contextHolder] = message.useMessage();
