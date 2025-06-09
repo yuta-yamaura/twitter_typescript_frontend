@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { instance } from "../../../utils/client";
-import { Flex, message, Pagination } from "antd";
+import { authInstance } from "../../../utils/client";
+import { Flex, message, Pagination, Popover } from "antd";
 import { Link } from "react-router-dom";
 import type { Tweet } from "../../../types/Tweet";
 import { Loading } from "../loading/Loading";
-import { getAuthToken } from "../../../utils/auth";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
 import { DashOutline } from "../../atoms/DashOutline";
 import { Message } from "../../atoms/Message";
 import { CommentCreateModal } from "../modals/CommentCreateModal";
 import type { PaginatedResponse } from "../../../types/PaginatedResponse";
+import { useTweetDelete } from "../../../utils/useTweetDelete";
 
 export const TweetsList = () => {
-  const token = getAuthToken();
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -23,17 +22,29 @@ export const TweetsList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTweet, setSelectedTweet] = useState<Tweet>();
   const [loading, setLoading] = useState(false);
+  const { deleteTweet } = useTweetDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchTweet(currentPage),
+  });
+
+  // 削除のpopover
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+
+  const handleOpenChange = (tweetId: number, newOpen: boolean) => {
+    setOpenPopovers((prev) => ({
+      ...prev,
+      [tweetId]: newOpen,
+    }));
+  };
 
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
-      const res = await instance.get<PaginatedResponse<Tweet>>(
-        `/api/tweets/?limit=${pageSize}&offset=${offset}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const res = await authInstance.get<PaginatedResponse<Tweet>>(
+        `/api/tweets/?limit=${pageSize}&offset=${offset}`
       );
       setTotal(res.data.count);
       setTweets(res.data.results);
@@ -111,7 +122,7 @@ export const TweetsList = () => {
                         src={
                           tweet.user.image
                             ? tweet.user.image
-                            : "../../../人物アイコン.png"
+                            : "../../../defaultAccountImage.png"
                         }
                         style={{
                           width: "45px",
@@ -142,13 +153,29 @@ export const TweetsList = () => {
                               )}
                           </span>
                         </div>
-                        <Button type="text" style={{ padding: 0 }}>
-                          <DashOutline
-                            width="24px"
-                            height="24px"
-                            style={{ justifyContent: "end" }}
-                          />
-                        </Button>
+                        <Popover
+                          content={
+                            <div
+                              onClick={() => deleteTweet(tweet.id)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              削除
+                            </div>
+                          }
+                          trigger="click"
+                          open={openPopovers[tweet.id]}
+                          onOpenChange={(newOpen) =>
+                            handleOpenChange(tweet.id, newOpen)
+                          }
+                        >
+                          <Button type="text" style={{ padding: 0 }}>
+                            <DashOutline
+                              width="24px"
+                              height="24px"
+                              style={{ justifyContent: "end" }}
+                            />
+                          </Button>
+                        </Popover>
                       </div>
                       <Link
                         to={`/tweet/${tweet.id}`}
@@ -156,7 +183,7 @@ export const TweetsList = () => {
                       >
                         <div key={tweet.id}>
                           <Flex>{tweet.content}</Flex>
-                          {tweet.tweetImage && (
+                          {tweet.image && (
                             <Flex
                               style={{
                                 alignItems: "center",
@@ -164,7 +191,7 @@ export const TweetsList = () => {
                               }}
                             >
                               <img
-                                src={tweet.tweetImage}
+                                src={tweet.image}
                                 style={{
                                   maxWidth: "100%",
                                   maxHeight: "300px",

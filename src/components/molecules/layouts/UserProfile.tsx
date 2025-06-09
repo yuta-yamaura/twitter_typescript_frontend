@@ -1,6 +1,6 @@
-import { Flex, message, Popover } from "antd";
-import { useParams } from "react-router-dom";
-import { instance } from "../../../utils/client";
+import { Flex, message } from "antd";
+import { useParams, useSearchParams } from "react-router-dom";
+import { authInstance } from "../../../utils/client";
 import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
@@ -9,18 +9,36 @@ import { Link } from "react-router-dom";
 import { Button } from "../../atoms/Button/Button";
 import { UserProfileUpdateModal } from "../modals/UserProfileUpdateModal";
 import { Loading } from "../loading/Loading";
-import { DashOutline } from "../../atoms/DashOutline";
-import { getAuthToken } from "../../../utils/auth";
 import { ProfilePostList } from "./ProfilePostList";
+import { useTweetDelete } from "../../../utils/useTweetDelete";
+import { ProfileCommentList } from "./ProfileCommentList";
+import { ProfileLikesList } from "./ProfileLikesList";
+import { ProfileRetweetsList } from "./ProfileRetweetsList";
+import type { ProfileComment } from "../../../types/Comment";
+import { useCommentDelete } from "../../../utils/useCommentDelete";
 
 export const UserProfile = () => {
-  const token = getAuthToken();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const currentTab = searchParams.get("tab") || "posts";
   const [user, setUser] = useState<User>();
+  const [userComment, setUserComment] = useState<ProfileComment>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { deleteTweet } = useTweetDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchUserProfile(),
+  });
+
+  const { deleteComment } = useCommentDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchUserProfileComment(),
+  });
 
   // 削除のpopover
   const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
@@ -36,11 +54,7 @@ export const UserProfile = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await instance.get<User>(`/api/users/profile/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await authInstance.get<User>(`/api/users/profile/${id}/`);
       setUser(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -49,24 +63,23 @@ export const UserProfile = () => {
     }
   };
 
-  const deleteTweet = async (id: number) => {
+  const fetchUserProfileComment = async () => {
     try {
-      setIsLoading(true);
-      await instance.delete<User>(`/api/tweets/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      messageApi.success("ツイートを削除しました");
-      // 最新のツイートを取得
-      await fetchUserProfile();
-    } catch (e) {
-      messageApi.error("ツイートの削除に失敗しました");
+      const res = await authInstance.get<ProfileComment>(
+        `/api/user/${id}/comments/`
+      );
+      console.log(res.data);
+      setUserComment(res.data);
+    } catch (error) {
+      messageApi.error("データが取得できませんでした");
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUserProfileComment();
+  }, [loading]);
 
   useEffect(() => {
     fetchUserProfile();
@@ -87,6 +100,36 @@ export const UserProfile = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  const renderTabContent = () => {
+    switch (currentTab) {
+      case "posts":
+        return (
+          <ProfilePostList
+            user={user}
+            deleteTweet={deleteTweet}
+            openPopovers={openPopovers}
+            handleOpenChange={handleOpenChange}
+          />
+        );
+      case "comments":
+        return (
+          <ProfileCommentList
+            user={user}
+            userComment={userComment}
+            deleteComment={deleteComment}
+            openPopovers={openPopovers}
+            handleOpenChange={handleOpenChange}
+          />
+        );
+      case "likes":
+        return <ProfileLikesList />;
+      case "retweets":
+        return <ProfileRetweetsList />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -123,7 +166,11 @@ export const UserProfile = () => {
                 }}
               >
                 <img
-                  src={user?.image ? user.image : "../../../人物アイコン.png"}
+                  src={
+                    user?.image
+                      ? user.image
+                      : "../../../defaultAccountImage.png"
+                  }
                   style={{
                     width: "133px",
                     height: "133px",
@@ -166,35 +213,58 @@ export const UserProfile = () => {
               </Flex>
             </div>
 
-            <div>
+            <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
               <Link
-                to={`/user/${id}`}
-                style={{ textDecoration: "None", color: "inherit" }}
+                to={`/user/${id}?tab=posts`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "posts" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "posts" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
               >
                 ポスト
-                <ProfilePostList
-                  user={user}
-                  deleteTweet={deleteTweet}
-                  openPopovers={openPopovers}
-                  handleOpenChange={handleOpenChange}
-                />
+              </Link>
+              <Link
+                to={`/user/${id}?tab=comments`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "comments" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "comments" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
+              >
+                コメント
+              </Link>
+              <Link
+                to={`/user/${id}?tab=likes`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "likes" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "likes" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
+              >
+                いいね
+              </Link>
+              <Link
+                to={`/user/${id}?tab=retweets`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "retweets" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "retweets" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
+              >
+                リツイート
               </Link>
             </div>
 
-            <div>
-              <Link
-                to={`/user/${id}`}
-                style={{ textDecoration: "None", color: "inherit" }}
-              >
-                コメント
-                <ProfilePostList
-                  user={user}
-                  deleteTweet={deleteTweet}
-                  openPopovers={openPopovers}
-                  handleOpenChange={handleOpenChange}
-                />
-              </Link>
-            </div>
+            <div>{renderTabContent()}</div>
           </div>
         )}
       </Baselayout>

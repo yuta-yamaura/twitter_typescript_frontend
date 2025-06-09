@@ -8,3 +8,7 @@ export type Comment = {
   image?: string | null;
   createdAt: string;
 };
+
+export interface ProfileComment extends User {
+  comments: Comment[];
+}

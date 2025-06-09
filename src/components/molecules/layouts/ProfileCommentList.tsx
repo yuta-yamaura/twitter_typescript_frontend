@@ -1,28 +1,30 @@
 import { Link } from "react-router-dom";
 import type { User } from "../../../types/User";
-import { Flex, Popover } from "antd";
+import { Button, Flex, Popover } from "antd";
 import dayjs from "dayjs";
-import { Button } from "../../atoms/Button/Button";
 import { DashOutline } from "../../atoms/DashOutline";
+import type { ProfileComment } from "../../../types/Comment";
 
-type ProfilePostListProps = {
+type ProfileCommentProps = {
   user?: User;
-  deleteTweet: (id: number) => void;
+  userComment?: ProfileComment;
+  deleteComment: (id: number) => void;
   openPopovers: { [key: number]: boolean };
   handleOpenChange: (tweetId: number, newOpen: boolean) => void;
 };
 
-export const ProfilePostList = ({
+export const ProfileCommentList = ({
   user,
-  deleteTweet,
+  userComment,
+  deleteComment,
   openPopovers,
   handleOpenChange,
-}: ProfilePostListProps) => {
+}: ProfileCommentProps) => {
   return (
     <div>
-      {user?.tweets?.map((tweet) => (
+      {userComment?.comments.map((comment) => (
         <div
-          key={tweet.id}
+          key={comment.id}
           style={{
             border: "solid 1px",
             borderColor: "#f5f5f5",
@@ -37,20 +39,20 @@ export const ProfilePostList = ({
             }}
           >
             <div>
-              <div key={tweet.id} style={{ paddingLeft: "8px" }}>
+              <div key={comment.id} style={{ paddingLeft: "8px" }}>
                 <div
                   style={{
                     display: "flex",
                   }}
                 >
                   <Link
-                    to={`/user/${tweet.user.id}`}
+                    to={`/user/${comment.user.id}`}
                     style={{ textDecoration: "None", color: "inherit" }}
                   >
                     <img
                       src={
-                        tweet.user.image
-                          ? tweet.user.image
+                        comment.user.image
+                          ? comment.user.image
                           : "../../../defaultAccountImage.png"
                       }
                       style={{
@@ -82,16 +84,16 @@ export const ProfilePostList = ({
                       <Popover
                         content={
                           <div
-                            onClick={() => deleteTweet(tweet.id)}
+                            onClick={() => deleteComment(comment.id)}
                             style={{ cursor: "pointer" }}
                           >
                             削除
                           </div>
                         }
                         trigger="click"
-                        open={openPopovers[tweet.id]}
+                        open={openPopovers[comment.id]}
                         onOpenChange={(newOpen) =>
-                          handleOpenChange(tweet.id, newOpen)
+                          handleOpenChange(comment.id, newOpen)
                         }
                       >
                         <Button type="text" style={{ padding: 0 }}>
@@ -104,12 +106,12 @@ export const ProfilePostList = ({
                       </Popover>
                     </div>
                     <Link
-                      to={`/tweet/${tweet.id}`}
+                      to={`/tweet/${comment.id}`}
                       style={{ textDecoration: "None", color: "inherit" }}
                     >
-                      <div key={tweet.id}>
-                        <Flex>{tweet.content}</Flex>
-                        {tweet.image && (
+                      <div key={comment.id}>
+                        <Flex>{comment.comment}</Flex>
+                        {comment.image && (
                           <Flex
                             style={{
                               alignItems: "center",
@@ -117,7 +119,7 @@ export const ProfilePostList = ({
                             }}
                           >
                             <img
-                              src={tweet.image}
+                              src={comment.image}
                               style={{
                                 maxWidth: "100%",
                                 maxHeight: "300px",

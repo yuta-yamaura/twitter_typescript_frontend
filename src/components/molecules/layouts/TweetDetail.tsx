@@ -1,4 +1,4 @@
-import { Flex, message } from "antd";
+import { Flex, message, Popover } from "antd";
 import { useParams } from "react-router-dom";
 import { instance } from "../../../utils/client";
 import type { Tweet } from "../../../types/Tweet";
@@ -12,6 +12,8 @@ import { CommentCreateModal } from "../modals/CommentCreateModal";
 import { Loading } from "../loading/Loading";
 import type { Comment } from "../../../types/Comment";
 import type { PaginatedResponse } from "../../../types/PaginatedResponse";
+import { DashOutline } from "../../atoms/DashOutline";
+import { useTweetDelete } from "../../../utils/useTweetDelete";
 
 export const TweetDetail = () => {
   const token = getAuthToken();
@@ -22,6 +24,20 @@ export const TweetDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { deleteTweet } = useTweetDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchTweetDetail(),
+  });
+  // 削除のpopover
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const handleOpenChange = (tweetId: number, newOpen: boolean) => {
+    setOpenPopovers(() => ({
+      [tweetId]: newOpen,
+    }));
+  };
 
   const fetchTweetDetail = async () => {
     try {
@@ -48,7 +64,6 @@ export const TweetDetail = () => {
           },
         }
       );
-      console.log(res);
       setComments(res.data.results);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -74,6 +89,7 @@ export const TweetDetail = () => {
       setIsModalOpen(false);
     }, 1000);
     fetchTweetDetail();
+    fetchComment();
   };
 
   const handleCancel = () => {
@@ -101,30 +117,63 @@ export const TweetDetail = () => {
               }}
             >
               <div>
-                <Flex style={{ display: "flex" }}>
-                  <img
-                    src={
-                      tweet?.user.image
-                        ? tweet.user.image
-                        : "../../../人物アイコン.png"
-                    }
-                    style={{
-                      width: "45px",
-                      height: "45px",
-                      borderRadius: "50%",
-                    }}
-                  />
-                  <div style={{ marginLeft: "8px" }}>
-                    <strong>
-                      {tweet?.user.accountName && tweet.user.accountName}
-                    </strong>
-                    <Flex> @{tweet?.user.username && tweet.user.username}</Flex>
-                  </div>
+                <Flex
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Flex style={{ display: "flex" }}>
+                    <img
+                      src={
+                        tweet?.user.image
+                          ? tweet.user.image
+                          : "../../../defaultAccountImage.png"
+                      }
+                      style={{
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                      }}
+                    />
+                    <Flex style={{ marginLeft: "8px" }}>
+                      <strong>
+                        {tweet?.user.accountName && tweet.user.accountName}
+                      </strong>
+                      <Flex>
+                        {" "}
+                        @{tweet?.user.username && tweet.user.username}
+                      </Flex>
+                    </Flex>
+                  </Flex>
+
+                  {tweet && (
+                    <Popover
+                      content={
+                        <Flex
+                          onClick={() => deleteTweet(tweet.id)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          削除
+                        </Flex>
+                      }
+                      trigger="click"
+                      open={openPopovers[tweet.id]}
+                      onOpenChange={(newOpen) =>
+                        handleOpenChange(tweet.id, newOpen)
+                      }
+                    >
+                      <Button type="text" style={{ padding: 0 }}>
+                        <DashOutline
+                          width="24px"
+                          height="24px"
+                          style={{ justifyContent: "end" }}
+                        />
+                      </Button>
+                    </Popover>
+                  )}
                 </Flex>
                 <Flex style={{ margin: "12px 0px" }}>
                   {tweet?.content && tweet.content}
                 </Flex>
-                {tweet?.tweetImage && (
+                {tweet?.image && (
                   <Flex
                     style={{
                       display: "flex",
@@ -133,7 +182,7 @@ export const TweetDetail = () => {
                     }}
                   >
                     <img
-                      src={tweet.tweetImage}
+                      src={tweet.image}
                       style={{
                         maxWidth: "100%",
                         maxHeight: "300px",
@@ -146,7 +195,7 @@ export const TweetDetail = () => {
                   {tweet?.createdAt &&
                     dayjs(tweet.createdAt).format("YYYY年M月D日 HH:mm")}
                 </Flex>
-                <div style={{ paddingTop: "8px" }}>
+                <Flex style={{ paddingTop: "8px" }}>
                   {tweet && (
                     <Button
                       type="text"
@@ -165,7 +214,7 @@ export const TweetDetail = () => {
                       handleCancel={handleCancel}
                     />
                   )}
-                </div>
+                </Flex>
               </div>
             </Flex>
           </Flex>
@@ -197,7 +246,7 @@ export const TweetDetail = () => {
                           src={
                             comment.user.image
                               ? comment.user.image
-                              : "../../../人物アイコン.png"
+                              : "../../../defaultAccountImage.png"
                           }
                           style={{
                             width: "45px",
