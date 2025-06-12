@@ -17,7 +17,6 @@ export const UserProfile = () => {
   const [user, setUser] = useState<User>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { deleteTweet, contextHolder: tweetDeleteContextHolder } =
     useTweetDelete({
@@ -48,19 +47,18 @@ export const UserProfile = () => {
 
   useEffect(() => {
     fetchUserProfile();
-  }, [loading]);
+  }, []);
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsModalOpen(false);
-    }, 1000);
-    fetchUserProfile();
+  const handleOk = async () => {
+    setIsLoading(true);
+    setUser(user);
+    setIsModalOpen(false);
+    await fetchUserProfile();
+    setIsLoading(false);
   };
 
   const handleCancel = () => {
@@ -123,7 +121,7 @@ export const UserProfile = () => {
                 {user && (
                   <UserProfileUpdateModal
                     user={user}
-                    loading={loading}
+                    isLoading={isLoading}
                     isModalOpen={isModalOpen}
                     handleOk={handleOk}
                     handleCancel={handleCancel}
