@@ -1,8 +1,7 @@
 import { Flex, message, Modal } from "antd";
-import { getAuthToken } from "../../../utils/auth";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { instance } from "../../../utils/client";
+import { authInstance } from "../../../utils/client";
 import { InputField } from "../forms/InputField";
 import {
   UserProfileSchema,
@@ -16,7 +15,7 @@ import { useEffect } from "react";
 
 type UserProfileUpdateModalProps = {
   user: User;
-  loading: boolean;
+  isLoading: boolean;
   isModalOpen: boolean;
   handleOk: () => void;
   handleCancel: () => void;
@@ -24,13 +23,12 @@ type UserProfileUpdateModalProps = {
 
 export const UserProfileUpdateModal = ({
   user,
-  loading,
+  isLoading,
   isModalOpen,
   handleOk,
   handleCancel,
 }: UserProfileUpdateModalProps) => {
   const { id } = useParams();
-  const token = getAuthToken();
   const [messageApi, contextHolder] = message.useMessage();
 
   const form = useForm<UserProfileForm>({
@@ -75,12 +73,7 @@ export const UserProfileUpdateModal = ({
         formData.append("image", data.image[0]);
       }
 
-      await instance.patch(`/api/users/profile/update/${id}/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await authInstance.patch(`/api/users/profile/${id}/`, formData);
       form.reset();
       messageApi.success("プロフィールの更新が完了しました");
       handleOk();
@@ -129,7 +122,7 @@ export const UserProfileUpdateModal = ({
             <Button
               type="primary"
               htmlType="submit"
-              loading={loading}
+              loading={isLoading}
               onClick={handleOk}
             >
               更新

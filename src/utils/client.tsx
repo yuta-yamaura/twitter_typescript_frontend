@@ -11,7 +11,7 @@ export const instance = axios.create({
 export const authInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 1000,
-  headers: { "Content-type": "application/json" },
+  headers: { "Content-type": "multipart/form-data" },
 });
 
 // authInstanceにBearer tokenを事前に付与

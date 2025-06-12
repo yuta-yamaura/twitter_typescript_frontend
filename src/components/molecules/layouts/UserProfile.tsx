@@ -180,7 +180,7 @@ export const UserProfile = () => {
                 {user && (
                   <UserProfileUpdateModal
                     user={user}
-                    loading={isLoading}
+                    isLoading={isLoading}
                     isModalOpen={isModalOpen}
                     handleOk={handleOk}
                     handleCancel={handleCancel}

@@ -1,11 +1,10 @@
 import { Flex, message, Popover } from "antd";
 import { useParams } from "react-router-dom";
-import { authInstance, instance } from "../../../utils/client";
+import { authInstance } from "../../../utils/client";
 import type { Tweet } from "../../../types/Tweet";
 import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
-import { getAuthToken } from "../../../utils/auth";
 import { Button } from "../../atoms/Button/Button";
 import { Message } from "../../atoms/Message";
 import { CommentCreateModal } from "../modals/CommentCreateModal";
