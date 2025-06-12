@@ -25,7 +25,6 @@ export const UserProfile = () => {
   const [userComment, setUserComment] = useState<ProfileComment>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const { deleteTweet } = useTweetDelete({
@@ -41,9 +40,7 @@ export const UserProfile = () => {
   });
 
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
 
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
@@ -65,10 +62,7 @@ export const UserProfile = () => {
 
   const fetchUserProfileComment = async () => {
     try {
-      const res = await authInstance.get<ProfileComment>(
-        `/api/user/${id}/comments/`
-      );
-      console.log(res.data);
+      const res = await authInstance.get<ProfileComment>(`/api/user/${id}/comments/`);
       setUserComment(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -79,23 +73,22 @@ export const UserProfile = () => {
 
   useEffect(() => {
     fetchUserProfileComment();
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     fetchUserProfile();
-  }, [loading]);
+  }, []);
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsModalOpen(false);
-    }, 1000);
-    fetchUserProfile();
+  const handleOk = async () => {
+    setIsLoading(true);
+    setUser(user);
+    setIsModalOpen(false);
+    await fetchUserProfile();
+    setIsLoading(false);
   };
 
   const handleCancel = () => {
@@ -187,7 +180,7 @@ export const UserProfile = () => {
                 {user && (
                   <UserProfileUpdateModal
                     user={user}
-                    loading={loading}
+                    loading={isLoading}
                     isModalOpen={isModalOpen}
                     handleOk={handleOk}
                     handleCancel={handleCancel}

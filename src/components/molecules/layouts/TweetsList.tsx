@@ -29,9 +29,7 @@ export const TweetsList = () => {
   });
 
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
 
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
@@ -43,9 +41,7 @@ export const TweetsList = () => {
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
-      const res = await authInstance.get<PaginatedResponse<Tweet>>(
-        `/api/tweets/?limit=${pageSize}&offset=${offset}`
-      );
+      const res = await authInstance.get<PaginatedResponse<Tweet>>(`/api/tweets/?limit=${pageSize}&offset=${offset}`);
       setTotal(res.data.count);
       setTweets(res.data.results);
     } catch (error) {
@@ -59,10 +55,6 @@ export const TweetsList = () => {
     fetchTweet(currentPage);
   }, [currentPage]);
 
-  useEffect(() => {
-    console.log(tweets);
-  }, [tweets]);
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -74,11 +66,9 @@ export const TweetsList = () => {
 
   const handleOk = () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsModalOpen(false);
-    }, 1000);
-    // fetchUserProfile();
+    setLoading(false);
+    setIsModalOpen(false);
+    fetchTweet(currentPage);
   };
 
   const handleCancel = () => {
@@ -87,6 +77,7 @@ export const TweetsList = () => {
 
   return (
     <>
+      {contextHolder}
       {isLoading ? (
         <Loading />
       ) : (

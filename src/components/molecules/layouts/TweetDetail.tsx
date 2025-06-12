@@ -1,6 +1,6 @@
 import { Flex, message, Popover } from "antd";
 import { useParams } from "react-router-dom";
-import { instance } from "../../../utils/client";
+import { authInstance, instance } from "../../../utils/client";
 import type { Tweet } from "../../../types/Tweet";
 import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
@@ -16,23 +16,19 @@ import { DashOutline } from "../../atoms/DashOutline";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 
 export const TweetDetail = () => {
-  const token = getAuthToken();
   const { id } = useParams();
   const [tweet, setTweet] = useState<Tweet>();
   const [comments, setComments] = useState<Comment[]>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { deleteTweet } = useTweetDelete({
     setIsLoading,
     messageApi,
     onSuccess: () => fetchTweetDetail(),
   });
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers(() => ({
       [tweetId]: newOpen,
@@ -41,11 +37,7 @@ export const TweetDetail = () => {
 
   const fetchTweetDetail = async () => {
     try {
-      const res = await instance.get<Tweet>(`/api/tweets/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await authInstance.get<Tweet>(`/api/tweets/${id}/`);
       setTweet(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -56,14 +48,7 @@ export const TweetDetail = () => {
 
   const fetchComment = async () => {
     try {
-      const res = await instance.get<PaginatedResponse<Comment>>(
-        `/api/tweets/${id}/comments/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await authInstance.get<PaginatedResponse<Comment>>(`/api/tweets/${id}/comments/`);
       setComments(res.data.results);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -83,11 +68,9 @@ export const TweetDetail = () => {
   };
 
   const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsModalOpen(false);
-    }, 1000);
+    setIsLoading(true);
+    setComments(comments);
+    setIsLoading(false);
     fetchTweetDetail();
     fetchComment();
   };
@@ -208,7 +191,7 @@ export const TweetDetail = () => {
                   {tweet && (
                     <CommentCreateModal
                       tweet={tweet}
-                      loading={loading}
+                      loading={isLoading}
                       isModalOpen={isModalOpen}
                       handleOk={handleOk}
                       handleCancel={handleCancel}

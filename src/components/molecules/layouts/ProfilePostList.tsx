@@ -71,7 +71,7 @@ export const ProfilePostList = ({
                       }}
                     >
                       <div>
-                        <strong>{user?.accountName && user.accountName}</strong>
+                        <strong>{user?.accountName ?? ""}</strong>
                         <span> @{user?.username && user.username}</span>
                         <span>
                           {" "}
