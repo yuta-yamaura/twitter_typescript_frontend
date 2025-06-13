@@ -27,7 +27,9 @@ export const TweetDetail = () => {
     onSuccess: () => fetchTweetDetail(),
   });
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers(() => ({
       [tweetId]: newOpen,
@@ -47,7 +49,9 @@ export const TweetDetail = () => {
 
   const fetchComment = async () => {
     try {
-      const res = await authInstance.get<PaginatedResponse<Comment>>(`/api/tweets/${id}/comments/`);
+      const res = await authInstance.get<PaginatedResponse<Comment>>(
+        `/api/tweets/${id}/comments/`
+      );
       setComments(res.data.results);
     } catch (error) {
       messageApi.error("データが取得できませんでした");

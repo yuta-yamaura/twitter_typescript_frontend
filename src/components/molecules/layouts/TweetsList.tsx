@@ -29,7 +29,9 @@ export const TweetsList = () => {
   });
 
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
@@ -41,7 +43,9 @@ export const TweetsList = () => {
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
-      const res = await authInstance.get<PaginatedResponse<Tweet>>(`/api/tweets/?limit=${pageSize}&offset=${offset}`);
+      const res = await authInstance.get<PaginatedResponse<Tweet>>(
+        `/api/tweets/?limit=${pageSize}&offset=${offset}`
+      );
       setTotal(res.data.count);
       setTweets(res.data.results);
     } catch (error) {
@@ -82,7 +86,6 @@ export const TweetsList = () => {
         <Loading />
       ) : (
         <div>
-          {contextHolder}
           {tweets?.map((tweet) => (
             <div
               key={tweet.id}
@@ -106,7 +109,7 @@ export const TweetsList = () => {
                     }}
                   >
                     <Link
-                      to={`/user/${tweet.user.id}`}
+                      to={`/user/${tweet.user.id}/`}
                       style={{ textDecoration: "None", color: "inherit" }}
                     >
                       <img
@@ -133,7 +136,7 @@ export const TweetsList = () => {
                       >
                         <div>
                           <strong>
-                            {tweet.user.accountName && tweet.user.accountName}
+                            {tweet.user.accountName ?? "DefaultName"}
                           </strong>
                           <span> @{tweet.user.username}</span>
                           <span>
