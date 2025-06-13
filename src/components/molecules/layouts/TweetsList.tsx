@@ -29,9 +29,7 @@ export const TweetsList = () => {
   });
 
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
 
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
