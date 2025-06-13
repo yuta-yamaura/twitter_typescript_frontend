@@ -190,7 +190,7 @@ export const UserProfile = () => {
             </div>
             <div style={{ paddingLeft: "8px", marginTop: "80px" }}>
               <Flex style={{ fontWeight: "bold" }}>
-                {user?.accountName && user.accountName}
+                {user?.accountName ?? "DefaultName"}
               </Flex>
               <Flex> @{user?.username && user.username}</Flex>
               <Flex

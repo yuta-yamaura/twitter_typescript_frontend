@@ -120,7 +120,7 @@ export const TweetDetail = () => {
                     />
                     <Flex style={{ marginLeft: "8px" }}>
                       <strong>
-                        {tweet?.user.accountName && tweet.user.accountName}
+                        {tweet?.user.accountName ?? "DefaultName"}
                       </strong>
                       <Flex>
                         {" "}
@@ -250,8 +250,7 @@ export const TweetDetail = () => {
                           >
                             <div>
                               <strong>
-                                {comment.user.accountName &&
-                                  comment.user.accountName}
+                                {comment.user.accountName ?? "DefaultName"}
                               </strong>
                               <span> @{comment.user.username}</span>
                               <span>

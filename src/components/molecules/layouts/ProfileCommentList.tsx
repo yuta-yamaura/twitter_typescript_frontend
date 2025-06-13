@@ -73,7 +73,7 @@ export const ProfileCommentList = ({
                       }}
                     >
                       <div>
-                        <strong>{user?.accountName && user.accountName}</strong>
+                        <strong>{user?.accountName ?? "DefaultName"}</strong>
                         <span> @{user?.username && user.username}</span>
                         <span>
                           {" "}
