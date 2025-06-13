@@ -1,4 +1,4 @@
-import { Flex, message } from "antd";
+import { Flex, message, Popover } from "antd";
 import { useParams } from "react-router-dom";
 import { authInstance } from "../../../utils/client";
 import type { Tweet } from "../../../types/Tweet";
@@ -8,12 +8,25 @@ import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
 import { DashOutline } from "../../atoms/DashOutline";
 import { Loading } from "../loading/Loading";
+import { useTweetDelete } from "../../../utils/useTweetDelete";
 
 export const TweetDetail = () => {
   const { id } = useParams();
   const [tweet, setTweet] = useState<Tweet>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(true);
+  const { deleteTweet, contextHolder: tweetDeleteContextHolder } =
+    useTweetDelete({
+      setIsLoading,
+      onSuccess: () => fetchTweetDetail(),
+    });
+  // 削除のpopover
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
+  const handleOpenChange = (tweetId: number, newOpen: boolean) => {
+    setOpenPopovers(() => ({
+      [tweetId]: newOpen,
+    }));
+  };
 
   const fetchTweetDetail = async () => {
     try {
@@ -34,6 +47,7 @@ export const TweetDetail = () => {
     <>
       <Baselayout>
         {contextHolder}
+        {tweetDeleteContextHolder}
         {isLoading ? (
           <Loading />
         ) : (
@@ -84,13 +98,31 @@ export const TweetDetail = () => {
                       </Flex>
                     </div>
                   </div>
-                  <Button type="text" style={{ padding: 0 }}>
-                    <DashOutline
-                      width="24px"
-                      height="24px"
-                      style={{ justifyContent: "end" }}
-                    />
-                  </Button>
+                  {tweet && (
+                    <Popover
+                      content={
+                        <div
+                          onClick={() => deleteTweet(tweet.id)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          削除
+                        </div>
+                      }
+                      trigger="click"
+                      open={openPopovers[tweet.id]}
+                      onOpenChange={(newOpen) =>
+                        handleOpenChange(tweet.id, newOpen)
+                      }
+                    >
+                      <Button type="text" style={{ padding: 0 }}>
+                        <DashOutline
+                          width="24px"
+                          height="24px"
+                          style={{ justifyContent: "end" }}
+                        />
+                      </Button>
+                    </Popover>
+                  )}
                 </div>
                 <Flex style={{ marginTop: "8px" }}>
                   {tweet?.content && tweet.content}

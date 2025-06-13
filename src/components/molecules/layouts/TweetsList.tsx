@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { authInstance } from "../../../utils/client";
-import { Flex, message, Pagination } from "antd";
+import { Flex, message, Pagination, Popover } from "antd";
 import { Link } from "react-router-dom";
 import type { Tweet } from "../../../types/Tweet";
 import { Loading } from "../loading/Loading";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
 import { DashOutline } from "../../atoms/DashOutline";
+import { useTweetDelete } from "../../../utils/useTweetDelete";
 
 type PaginatedResponse = {
   count: number;
@@ -17,16 +18,33 @@ type PaginatedResponse = {
 
 export const TweetsList = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi] = message.useMessage();
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [total, setTotal] = useState<number>();
   const pageSize = 5;
-  const [isLoading, setIsLoading] = useState(true);
+  const { deleteTweet, contextHolder: tweetDeleteContextHolder } =
+    useTweetDelete({
+      setIsLoading,
+      onSuccess: () => fetchTweet(currentPage),
+    });
+
+  // 削除のpopover
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
+
+  const handleOpenChange = (tweetId: number, newOpen: boolean) => {
+    setOpenPopovers((prev) => ({
+      ...prev,
+      [tweetId]: newOpen,
+    }));
+  };
 
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
-      const res = await authInstance.get<PaginatedResponse>(`/api/tweets/?limit=${pageSize}&offset=${offset}`);
+      const res = await authInstance.get<PaginatedResponse>(
+        `/api/tweets/?limit=${pageSize}&offset=${offset}`
+      );
       setTotal(res.data.count);
       setTweets(res.data.results);
     } catch (error) {
@@ -46,11 +64,11 @@ export const TweetsList = () => {
 
   return (
     <>
+      {tweetDeleteContextHolder}
       {isLoading ? (
         <Loading />
       ) : (
         <div>
-          {contextHolder}
           {tweets?.map((tweet) => (
             <div
               key={tweet.id}
@@ -73,19 +91,24 @@ export const TweetsList = () => {
                       display: "flex",
                     }}
                   >
-                    <img
-                      src={
-                        tweet.user.image
-                          ? tweet.user.image
-                          : "../../../defaultAccountImage.png"
-                      }
-                      style={{
-                        width: "45px",
-                        height: "45px",
-                        borderRadius: "50%",
-                        marginRight: "8px",
-                      }}
-                    />
+                    <Link
+                      to={`/user/${tweet.user.id}/`}
+                      style={{ textDecoration: "None", color: "inherit" }}
+                    >
+                      <img
+                        src={
+                          tweet.user.image
+                            ? tweet.user.image
+                            : "../../../defaultAccountImage.png"
+                        }
+                        style={{
+                          width: "45px",
+                          height: "45px",
+                          borderRadius: "50%",
+                          marginRight: "8px",
+                        }}
+                      />
+                    </Link>
                     <div style={{ width: "100%" }}>
                       <div
                         style={{
@@ -107,13 +130,29 @@ export const TweetsList = () => {
                               )}
                           </span>
                         </div>
-                        <Button type="text" style={{ padding: 0 }}>
-                          <DashOutline
-                            width="24px"
-                            height="24px"
-                            style={{ justifyContent: "end" }}
-                          />
-                        </Button>
+                        <Popover
+                          content={
+                            <div
+                              onClick={() => deleteTweet(tweet.id)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              削除
+                            </div>
+                          }
+                          trigger="click"
+                          open={openPopovers[tweet.id]}
+                          onOpenChange={(newOpen) =>
+                            handleOpenChange(tweet.id, newOpen)
+                          }
+                        >
+                          <Button type="text" style={{ padding: 0 }}>
+                            <DashOutline
+                              width="24px"
+                              height="24px"
+                              style={{ justifyContent: "end" }}
+                            />
+                          </Button>
+                        </Popover>
                       </div>
                       <Link
                         to={`/tweet/${tweet.id}`}
