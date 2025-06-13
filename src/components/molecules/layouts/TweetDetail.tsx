@@ -76,6 +76,7 @@ export const TweetDetail = () => {
     setIsLoading(false);
     fetchTweetDetail();
     fetchComment();
+    setIsModalOpen(false);
   };
 
   const handleCancel = () => {

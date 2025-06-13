@@ -1,8 +1,7 @@
 import { Flex, message, Modal } from "antd";
-import { getAuthToken } from "../../../utils/auth";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { instance } from "../../../utils/client";
+import { authInstance } from "../../../utils/client";
 import { InputField } from "../forms/InputField";
 import type { z } from "zod";
 import { Button } from "../../atoms/Button/Button";
@@ -24,7 +23,6 @@ export const CommentCreateModal = ({
   handleOk,
   handleCancel,
 }: CommentCreateModalProps) => {
-  const token = getAuthToken();
   const [messageApi, contextHolder] = message.useMessage();
 
   const form = useForm<CommentForm>({
@@ -45,12 +43,7 @@ export const CommentCreateModal = ({
         formData.append("image", data.image[0]);
       }
 
-      await instance.post(`/api/tweets/${tweet.id}/comments/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await authInstance.post(`/api/tweets/${tweet.id}/comments/`, formData);
       form.reset();
       messageApi.success("コメントの送信が完了しました");
       handleOk();
