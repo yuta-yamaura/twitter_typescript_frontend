@@ -6,4 +6,5 @@ export type Tweet = {
   content: string;
   image?: string | null;
   createdAt: string;
+  retweetCount?: number;
 };

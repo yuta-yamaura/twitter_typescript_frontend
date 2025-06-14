@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
-import { Message } from "../../atoms/Message";
+import { Message } from "../../atoms/Icon/Message";
 import { CommentCreateModal } from "../modals/CommentCreateModal";
 import { Loading } from "../loading/Loading";
 import type { Comment } from "../../../types/Comment";
 import type { PaginatedResponse } from "../../../types/PaginatedResponse";
-import { DashOutline } from "../../atoms/DashOutline";
+import { DashOutline } from "../../atoms/Icon/DashOutline";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 
 export const TweetDetail = () => {

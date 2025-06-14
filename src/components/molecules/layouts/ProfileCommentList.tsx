@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import type { User } from "../../../types/User";
 import { Button, Flex, Popover } from "antd";
 import dayjs from "dayjs";
-import { DashOutline } from "../../atoms/DashOutline";
 import type { ProfileComment } from "../../../types/Comment";
+import { DashOutline } from "../../atoms/Icon/DashOutline";
 
 type ProfileCommentProps = {
   user?: User;

@@ -16,6 +16,7 @@ import { ProfileLikesList } from "./ProfileLikesList";
 import { ProfileRetweetsList } from "./ProfileRetweetsList";
 import type { ProfileComment } from "../../../types/Comment";
 import { useCommentDelete } from "../../../utils/useCommentDelete";
+import type { ProfileRetweet } from "../../../types/Retweet";
 
 export const UserProfile = () => {
   const { id } = useParams();
@@ -23,6 +24,7 @@ export const UserProfile = () => {
   const currentTab = searchParams.get("tab") || "posts";
   const [user, setUser] = useState<User>();
   const [userComment, setUserComment] = useState<ProfileComment>();
+  const [userRetweet, setUserRetweet] = useState<ProfileRetweet>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,11 +73,21 @@ export const UserProfile = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserProfileComment();
-  }, []);
+  const fetchUserProfileRetwet = async () => {
+    try {
+      const res = await authInstance.get<ProfileRetweet>(`/api/user/${id}/retweet/`);
+      console.log(res.data);
+      setUserRetweet(res.data);
+    } catch (error) {
+      messageApi.error("データが取得できませんでした");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
+    fetchUserProfileComment();
+    fetchUserProfileRetwet();
     fetchUserProfile();
   }, []);
 
@@ -119,7 +131,7 @@ export const UserProfile = () => {
       case "likes":
         return <ProfileLikesList />;
       case "retweets":
-        return <ProfileRetweetsList />;
+        return <ProfileRetweetsList userRetweet={userRetweet} />;
       default:
         return null;
     }
