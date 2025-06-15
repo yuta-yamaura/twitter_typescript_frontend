@@ -7,4 +7,5 @@ export type Tweet = {
   image?: string | null;
   createdAt: string;
   retweetCount?: number;
+  loginUserRetweeted: boolean;
 };

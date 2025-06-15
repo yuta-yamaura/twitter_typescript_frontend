@@ -250,7 +250,7 @@ export const TweetsList = () => {
                             />
                           )}
                         </div>
-                        {retweeted[tweet.id] ? (
+                        {tweet.loginUserRetweeted ? (
                           <div
                             style={{
                               paddingTop: "8px",

@@ -4,7 +4,7 @@ export type Comment = {
   id: number;
   user: User;
   tweet: number;
-  comment: string;
+  content: string;
   image?: string | null;
   createdAt: string;
 };

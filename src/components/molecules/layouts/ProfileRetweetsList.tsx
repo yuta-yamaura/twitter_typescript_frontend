@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import { Flex } from "antd";
 import type { ProfileRetweet } from "../../../types/Retweet";
 import dayjs from "dayjs";
+import { Button } from "../../atoms/Button/Button";
+import { Message } from "../../atoms/Icon/Message";
+import { Retweet } from "../../atoms/Icon/Retweet";
+import { XLogoView } from "../../atoms/Icon/XLogoView";
 
 type ProfileRetweetsListProps = {
   userRetweet?: ProfileRetweet;
@@ -102,6 +106,72 @@ export const ProfileRetweetsList = ({
                         )}
                       </div>
                     </Link>
+                    <Flex
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div
+                        style={{
+                          paddingTop: "8px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Message width={"22px"} height={"22px"} />
+                      </div>
+                      {retweet ? (
+                        <div
+                          style={{
+                            paddingTop: "8px",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Retweet
+                            width={"22px"}
+                            height={"22px"}
+                            style={{ color: "#32cd32" }}
+                          />
+                          {retweet.retweetCount === 0 ? (
+                            ""
+                          ) : (
+                            <span style={{ color: "#32cd32" }}>
+                              {retweet.retweetCount}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            paddingTop: "8px",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Retweet width={"22px"} height={"22px"} />
+                        </div>
+                      )}
+                      <div style={{ paddingTop: "8px" }}>
+                        <Button
+                          type="text"
+                          onClick={() => {}}
+                          style={{ padding: 0 }}
+                        >
+                          <XLogoView width={"22px"} height={"22px"} />
+                        </Button>
+                      </div>
+                      <div style={{ paddingTop: "8px" }}>
+                        <Button
+                          type="text"
+                          onClick={() => {}}
+                          style={{ padding: 0 }}
+                        >
+                          <XLogoView width={"22px"} height={"22px"} />
+                        </Button>
+                      </div>
+                    </Flex>
                   </div>
                 </div>
               </div>

@@ -9,6 +9,7 @@ type Retweet = Omit<User, "name" | "isAdmin" | "tweets"> & {
   };
   retweet: number;
   createdAt: string;
+  retweetCount: number;
 };
 
 export type ProfileRetweet = {
