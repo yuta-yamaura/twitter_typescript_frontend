@@ -1,5 +1,5 @@
 import { Flex, message } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { authInstance } from "../../../utils/client";
 import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
@@ -11,18 +11,33 @@ import { UserProfileUpdateModal } from "../modals/UserProfileUpdateModal";
 import { Loading } from "../loading/Loading";
 import { ProfilePostList } from "./ProfilePostList";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
+import { ProfileCommentList } from "./ProfileCommentList";
+import { ProfileLikesList } from "./ProfileLikesList";
+import { ProfileRetweetsList } from "./ProfileRetweetsList";
+import type { ProfileComment } from "../../../types/Comment";
+import { useCommentDelete } from "../../../utils/useCommentDelete";
 
 export const UserProfile = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const currentTab = searchParams.get("tab") || "posts";
   const [user, setUser] = useState<User>();
+  const [userComment, setUserComment] = useState<ProfileComment>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { deleteTweet, contextHolder: tweetDeleteContextHolder } =
-    useTweetDelete({
-      setIsLoading,
-      onSuccess: () => fetchUserProfile(),
-    });
+
+  const { deleteTweet } = useTweetDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchUserProfile(),
+  });
+
+  const { deleteComment } = useCommentDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchUserProfileComment(),
+  });
 
   // 削除のpopover
   const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
@@ -45,6 +60,21 @@ export const UserProfile = () => {
     }
   };
 
+  const fetchUserProfileComment = async () => {
+    try {
+      const res = await authInstance.get<ProfileComment>(`/api/user/${id}/comments/`);
+      setUserComment(res.data);
+    } catch (error) {
+      messageApi.error("データが取得できませんでした");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfileComment();
+  }, []);
+
   useEffect(() => {
     fetchUserProfile();
   }, []);
@@ -65,11 +95,40 @@ export const UserProfile = () => {
     setIsModalOpen(false);
   };
 
+  const renderTabContent = () => {
+    switch (currentTab) {
+      case "posts":
+        return (
+          <ProfilePostList
+            user={user}
+            deleteTweet={deleteTweet}
+            openPopovers={openPopovers}
+            handleOpenChange={handleOpenChange}
+          />
+        );
+      case "comments":
+        return (
+          <ProfileCommentList
+            user={user}
+            userComment={userComment}
+            deleteComment={deleteComment}
+            openPopovers={openPopovers}
+            handleOpenChange={handleOpenChange}
+          />
+        );
+      case "likes":
+        return <ProfileLikesList />;
+      case "retweets":
+        return <ProfileRetweetsList />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       <Baselayout>
         {contextHolder}
-        {tweetDeleteContextHolder}
         {isLoading ? (
           <Loading />
         ) : (
@@ -131,7 +190,7 @@ export const UserProfile = () => {
             </div>
             <div style={{ paddingLeft: "8px", marginTop: "80px" }}>
               <Flex style={{ fontWeight: "bold" }}>
-                {user?.accountName && user.accountName}
+                {user?.accountName ?? "DefaultName"}
               </Flex>
               <Flex> @{user?.username && user.username}</Flex>
               <Flex
@@ -147,20 +206,58 @@ export const UserProfile = () => {
               </Flex>
             </div>
 
-            <div>
+            <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
               <Link
-                to={`/user/${id}`}
-                style={{ textDecoration: "None", color: "inherit" }}
+                to={`/user/${id}?tab=posts`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "posts" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "posts" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
               >
                 ポスト
-                <ProfilePostList
-                  user={user}
-                  deleteTweet={deleteTweet}
-                  openPopovers={openPopovers}
-                  handleOpenChange={handleOpenChange}
-                />
+              </Link>
+              <Link
+                to={`/user/${id}?tab=comments`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "comments" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "comments" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
+              >
+                コメント
+              </Link>
+              <Link
+                to={`/user/${id}?tab=likes`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "likes" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "likes" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
+              >
+                いいね
+              </Link>
+              <Link
+                to={`/user/${id}?tab=retweets`}
+                style={{
+                  textDecoration: "none",
+                  color: currentTab === "retweets" ? "#1DA1F2" : "inherit",
+                  borderBottom:
+                    currentTab === "retweets" ? "2px solid #1DA1F2" : "none",
+                  padding: "10px 0",
+                }}
+              >
+                リツイート
               </Link>
             </div>
+
+            <div>{renderTabContent()}</div>
           </div>
         )}
       </Baselayout>

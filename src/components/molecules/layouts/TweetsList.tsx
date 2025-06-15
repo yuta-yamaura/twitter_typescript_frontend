@@ -7,27 +7,26 @@ import { Loading } from "../loading/Loading";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
 import { DashOutline } from "../../atoms/DashOutline";
+import { Message } from "../../atoms/Message";
+import { CommentCreateModal } from "../modals/CommentCreateModal";
+import type { PaginatedResponse } from "../../../types/PaginatedResponse";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
-
-type PaginatedResponse = {
-  count: number;
-  next: string;
-  previous: string | null;
-  results: Tweet[];
-};
 
 export const TweetsList = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
-  const [messageApi] = message.useMessage();
-  const [isLoading, setIsLoading] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [total, setTotal] = useState<number>();
   const pageSize = 5;
-  const { deleteTweet, contextHolder: tweetDeleteContextHolder } =
-    useTweetDelete({
-      setIsLoading,
-      onSuccess: () => fetchTweet(currentPage),
-    });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTweet, setSelectedTweet] = useState<Tweet>();
+  const [loading, setLoading] = useState(false);
+  const { deleteTweet } = useTweetDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchTweet(currentPage),
+  });
 
   // 削除のpopover
   const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
@@ -42,7 +41,7 @@ export const TweetsList = () => {
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
-      const res = await authInstance.get<PaginatedResponse>(
+      const res = await authInstance.get<PaginatedResponse<Tweet>>(
         `/api/tweets/?limit=${pageSize}&offset=${offset}`
       );
       setTotal(res.data.count);
@@ -62,9 +61,25 @@ export const TweetsList = () => {
     setCurrentPage(page);
   };
 
+  const handleOpenModal = (tweet: Tweet) => {
+    setSelectedTweet(tweet);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setLoading(true);
+    setLoading(false);
+    setIsModalOpen(false);
+    fetchTweet(currentPage);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
-      {tweetDeleteContextHolder}
+      {contextHolder}
       {isLoading ? (
         <Loading />
       ) : (
@@ -180,6 +195,24 @@ export const TweetsList = () => {
                           )}
                         </div>
                       </Link>
+                      <div style={{ paddingTop: "8px" }}>
+                        <Button
+                          type="text"
+                          onClick={() => handleOpenModal(tweet)}
+                          style={{ padding: 0 }}
+                        >
+                          <Message width={"22px"} height={"22px"} />
+                        </Button>
+                        {selectedTweet?.id === tweet.id && (
+                          <CommentCreateModal
+                            tweet={tweet}
+                            loading={loading}
+                            isModalOpen={isModalOpen}
+                            handleOk={handleOk}
+                            handleCancel={handleCancel}
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

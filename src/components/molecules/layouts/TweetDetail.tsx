@@ -6,20 +6,26 @@ import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
-import { DashOutline } from "../../atoms/DashOutline";
+import { Message } from "../../atoms/Message";
+import { CommentCreateModal } from "../modals/CommentCreateModal";
 import { Loading } from "../loading/Loading";
+import type { Comment } from "../../../types/Comment";
+import type { PaginatedResponse } from "../../../types/PaginatedResponse";
+import { DashOutline } from "../../atoms/DashOutline";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 
 export const TweetDetail = () => {
   const { id } = useParams();
   const [tweet, setTweet] = useState<Tweet>();
+  const [comments, setComments] = useState<Comment[]>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(true);
-  const { deleteTweet, contextHolder: tweetDeleteContextHolder } =
-    useTweetDelete({
-      setIsLoading,
-      onSuccess: () => fetchTweetDetail(),
-    });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { deleteTweet } = useTweetDelete({
+    setIsLoading,
+    messageApi,
+    onSuccess: () => fetchTweetDetail(),
+  });
   // 削除のpopover
   const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
@@ -39,42 +45,67 @@ export const TweetDetail = () => {
     }
   };
 
+  const fetchComment = async () => {
+    try {
+      const res = await authInstance.get<PaginatedResponse<Comment>>(
+        `/api/tweets/${id}/comments/`
+      );
+      setComments(res.data.results);
+    } catch (error) {
+      messageApi.error("データが取得できませんでした");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTweetDetail();
+    fetchComment();
   }, []);
+
+  const handleOpenModal = (tweet: Tweet) => {
+    setTweet(tweet);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsLoading(true);
+    setComments(comments);
+    setIsLoading(false);
+    fetchTweetDetail();
+    fetchComment();
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <>
-      <Baselayout>
-        {contextHolder}
-        {tweetDeleteContextHolder}
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Baselayout>
+          {contextHolder}
+          <Flex
             key={id}
             style={{
               border: "solid 1px",
               borderColor: "#f5f5f5",
-              width: "100%",
-              maxWidth: "600px",
-              margin: "0 auto",
             }}
           >
-            <div
+            <Flex
               style={{
+                display: "flex",
                 padding: "12px 16px",
               }}
             >
-              <div style={{ width: "100%" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+              <div>
+                <Flex
+                  style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <div style={{ display: "flex" }}>
+                  <Flex style={{ display: "flex" }}>
                     <img
                       src={
                         tweet?.user.image
@@ -85,10 +116,9 @@ export const TweetDetail = () => {
                         width: "45px",
                         height: "45px",
                         borderRadius: "50%",
-                        marginRight: "8px",
                       }}
                     />
-                    <div>
+                    <Flex style={{ marginLeft: "8px" }}>
                       <strong>
                         {tweet?.user.accountName ?? "DefaultName"}
                       </strong>
@@ -96,17 +126,18 @@ export const TweetDetail = () => {
                         {" "}
                         @{tweet?.user.username && tweet.user.username}
                       </Flex>
-                    </div>
-                  </div>
+                    </Flex>
+                  </Flex>
+
                   {tweet && (
                     <Popover
                       content={
-                        <div
+                        <Flex
                           onClick={() => deleteTweet(tweet.id)}
                           style={{ cursor: "pointer" }}
                         >
                           削除
-                        </div>
+                        </Flex>
                       }
                       trigger="click"
                       open={openPopovers[tweet.id]}
@@ -123,13 +154,14 @@ export const TweetDetail = () => {
                       </Button>
                     </Popover>
                   )}
-                </div>
-                <Flex style={{ marginTop: "8px" }}>
+                </Flex>
+                <Flex style={{ margin: "12px 0px" }}>
                   {tweet?.content && tweet.content}
                 </Flex>
                 {tweet?.image && (
                   <Flex
                     style={{
+                      display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                     }}
@@ -140,20 +172,129 @@ export const TweetDetail = () => {
                         maxWidth: "100%",
                         maxHeight: "300px",
                         borderRadius: "20px",
-                        marginTop: "8px",
                       }}
                     />
                   </Flex>
                 )}
-                <Flex style={{ marginTop: "8px" }}>
+                <Flex>
                   {tweet?.createdAt &&
                     dayjs(tweet.createdAt).format("YYYY年M月D日 HH:mm")}
                 </Flex>
+                <Flex style={{ paddingTop: "8px" }}>
+                  {tweet && (
+                    <Button
+                      type="text"
+                      onClick={() => handleOpenModal(tweet)}
+                      style={{ padding: 0 }}
+                    >
+                      <Message width={"22px"} height={"22px"} />
+                    </Button>
+                  )}
+                  {tweet && (
+                    <CommentCreateModal
+                      tweet={tweet}
+                      loading={isLoading}
+                      isModalOpen={isModalOpen}
+                      handleOk={handleOk}
+                      handleCancel={handleCancel}
+                    />
+                  )}
+                </Flex>
               </div>
-            </div>
+            </Flex>
+          </Flex>
+          <div>
+            {comments &&
+              comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  style={{
+                    border: "solid 1px",
+                    borderColor: "#f5f5f5",
+                    width: "100%",
+                    maxWidth: "600px",
+                    margin: "0 auto",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "12px 16px",
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                        }}
+                      >
+                        <img
+                          src={
+                            comment.user.image
+                              ? comment.user.image
+                              : "../../../defaultAccountImage.png"
+                          }
+                          style={{
+                            width: "45px",
+                            height: "45px",
+                            borderRadius: "50%",
+                            marginRight: "8px",
+                          }}
+                        />
+                        <div style={{ width: "100%" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div>
+                              <strong>
+                                {comment.user.accountName ?? "DefaultName"}
+                              </strong>
+                              <span> @{comment.user.username}</span>
+                              <span>
+                                {" "}
+                                {comment.user?.createdAt &&
+                                  dayjs(comment.user.createdAt).format(
+                                    "YYYY年M月D日"
+                                  )}
+                              </span>
+                            </div>
+                          </div>
+                          <div key={comment.id}>
+                            <Flex>{comment.comment}</Flex>
+                            {comment.image && (
+                              <Flex
+                                style={{
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <img
+                                  src={comment.image}
+                                  style={{
+                                    maxWidth: "100%",
+                                    maxHeight: "300px",
+                                    borderRadius: "20px",
+                                    marginTop: "8px",
+                                  }}
+                                />
+                              </Flex>
+                            )}
+                          </div>
+                          <div style={{ paddingTop: "8px" }}>
+                            <Message width={"22px"} height={"22px"} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
-        )}
-      </Baselayout>
+        </Baselayout>
+      )}
     </>
   );
 };
