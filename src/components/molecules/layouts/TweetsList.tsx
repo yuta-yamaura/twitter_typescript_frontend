@@ -31,9 +31,7 @@ export const TweetsList = () => {
   });
 
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
 
   const [retweeted, setRetweeted] = useState<{ [key: number]: boolean }>({});
 
@@ -49,7 +47,6 @@ export const TweetsList = () => {
       ...prev,
       [tweetId]: retweet,
     }));
-    console.log("retweetedの中身", retweeted);
   };
 
   const fetchTweet = async (page: number) => {
@@ -72,7 +69,6 @@ export const TweetsList = () => {
       await authInstance.post(`/api/tweets/${id}/retweet/`);
       handleRetweetChange(id, !retweeted[id]);
       fetchTweet(currentPage);
-      console.log("retweetedの中身 handleRetweet", retweeted);
     } catch (error) {
       messageApi.error("リツイートできませんでした");
     }
@@ -83,7 +79,6 @@ export const TweetsList = () => {
       await authInstance.delete(`/api/tweets/${id}/unretweet/`);
       handleRetweetChange(id, !retweeted[id]);
       fetchTweet(currentPage);
-      console.log("retweetedの中身 handleUnRetweet", retweeted);
     } catch (error) {
       messageApi.error("リツイートを削除できませんでした");
     }
@@ -273,13 +268,13 @@ export const TweetsList = () => {
                               <Retweet
                                 width={"22px"}
                                 height={"22px"}
-                                style={{ color: "green" }}
+                                style={{ color: "#32cd32" }}
                               />
                             </Button>
                             {tweet?.retweetCount === 0 ? (
                               ""
                             ) : (
-                              <span style={{ color: "green" }}>
+                              <span style={{ color: "#32cd32" }}>
                                 {tweet.retweetCount}
                               </span>
                             )}

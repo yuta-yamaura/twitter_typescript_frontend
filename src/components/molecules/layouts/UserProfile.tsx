@@ -76,7 +76,6 @@ export const UserProfile = () => {
   const fetchUserProfileRetwet = async () => {
     try {
       const res = await authInstance.get<ProfileRetweet>(`/api/user/${id}/retweet/`);
-      console.log(res.data);
       setUserRetweet(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
