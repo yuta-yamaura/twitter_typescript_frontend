@@ -8,4 +8,5 @@ export type Tweet = {
   createdAt: string;
   retweetCount?: number;
   loginUserRetweeted: boolean;
+  loginUserLiked: boolean;
 };
