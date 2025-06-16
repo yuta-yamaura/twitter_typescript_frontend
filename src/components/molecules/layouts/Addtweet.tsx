@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { instance } from "../../../utils/client";
 import { getAuthToken } from "../../../utils/auth";
-import { Image } from "../../atoms/Image";
+import { Image } from "../../atoms/Icon/Image";
 import { TweetSchema, type TweetForm } from "../../../schema/TweetSchema";
 import { TweetsList } from "./TweetsList";
 import { useState } from "react";

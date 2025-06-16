@@ -1,4 +1,4 @@
-import type { Icon } from "../../types/Icon";
+import type { Icon } from "../../../types/Icon";
 
 export const XLogoView = ({ width = "24px", height = "24px" }: Icon) => {
   return (

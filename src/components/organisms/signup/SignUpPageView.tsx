@@ -1,6 +1,6 @@
 import { Flex, message, Space } from "antd";
 import { setAuthToken } from "../../../utils/auth";
-import { XLogoView } from "../../atoms/XLogoView";
+import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { instance } from "../../../utils/client";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import {

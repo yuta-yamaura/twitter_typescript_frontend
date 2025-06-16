@@ -3,7 +3,7 @@ import type { User } from "../../../types/User";
 import { Flex, Popover } from "antd";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
-import { DashOutline } from "../../atoms/DashOutline";
+import { DashOutline } from "../../atoms/Icon/DashOutline";
 
 type ProfilePostListProps = {
   user?: User;

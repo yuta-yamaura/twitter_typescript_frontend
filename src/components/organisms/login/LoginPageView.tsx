@@ -1,5 +1,5 @@
 import { Flex, message, Space } from "antd";
-import { XLogoView } from "../../atoms/XLogoView";
+import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { InputField } from "../../molecules/forms/InputField";
 import { Button } from "../../atoms/Button/Button";
 import { useForm, type SubmitHandler } from "react-hook-form";

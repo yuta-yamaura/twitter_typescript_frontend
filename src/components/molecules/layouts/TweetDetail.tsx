@@ -6,13 +6,15 @@ import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
-import { Message } from "../../atoms/Message";
+import { Message } from "../../atoms/Icon/Message";
 import { CommentCreateModal } from "../modals/CommentCreateModal";
 import { Loading } from "../loading/Loading";
 import type { Comment } from "../../../types/Comment";
 import type { PaginatedResponse } from "../../../types/PaginatedResponse";
-import { DashOutline } from "../../atoms/DashOutline";
+import { DashOutline } from "../../atoms/Icon/DashOutline";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
+import { Retweet } from "../../atoms/Icon/Retweet";
+import { XLogoView } from "../../atoms/Icon/XLogoView";
 
 export const TweetDetail = () => {
   const { id } = useParams();
@@ -180,25 +182,89 @@ export const TweetDetail = () => {
                   {tweet?.createdAt &&
                     dayjs(tweet.createdAt).format("YYYY年M月D日 HH:mm")}
                 </Flex>
-                <Flex style={{ paddingTop: "8px" }}>
-                  {tweet && (
+                <Flex
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    style={{
+                      paddingTop: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {tweet && (
+                      <Button
+                        type="text"
+                        onClick={() => handleOpenModal(tweet)}
+                        style={{ padding: 0 }}
+                      >
+                        <Message width={"22px"} height={"22px"} />
+                      </Button>
+                    )}
+                    {tweet && (
+                      <CommentCreateModal
+                        tweet={tweet}
+                        loading={isLoading}
+                        isModalOpen={isModalOpen}
+                        handleOk={handleOk}
+                        handleCancel={handleCancel}
+                      />
+                    )}
+                  </div>
+                  {tweet?.loginUserRetweeted ? (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Retweet
+                        width={"22px"}
+                        height={"22px"}
+                        style={{ color: "#32cd32" }}
+                      />
+                      {tweet.retweetCount === 0 ? (
+                        ""
+                      ) : (
+                        <span style={{ color: "#32cd32" }}>
+                          {tweet.retweetCount}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Retweet width={"22px"} height={"22px"} />
+                      {tweet?.retweetCount === 0 ? "" : tweet?.retweetCount}
+                    </div>
+                  )}
+                  <div style={{ paddingTop: "8px" }}>
                     <Button
                       type="text"
-                      onClick={() => handleOpenModal(tweet)}
+                      onClick={() => {}}
                       style={{ padding: 0 }}
                     >
-                      <Message width={"22px"} height={"22px"} />
+                      <XLogoView width={"22px"} height={"22px"} />
                     </Button>
-                  )}
-                  {tweet && (
-                    <CommentCreateModal
-                      tweet={tweet}
-                      loading={isLoading}
-                      isModalOpen={isModalOpen}
-                      handleOk={handleOk}
-                      handleCancel={handleCancel}
-                    />
-                  )}
+                  </div>
+                  <div style={{ paddingTop: "8px" }}>
+                    <Button
+                      type="text"
+                      onClick={() => {}}
+                      style={{ padding: 0 }}
+                    >
+                      <XLogoView width={"22px"} height={"22px"} />
+                    </Button>
+                  </div>
                 </Flex>
               </div>
             </Flex>
@@ -263,7 +329,7 @@ export const TweetDetail = () => {
                             </div>
                           </div>
                           <div key={comment.id}>
-                            <Flex>{comment.comment}</Flex>
+                            <Flex>{comment.content}</Flex>
                             {comment.image && (
                               <Flex
                                 style={{
@@ -282,9 +348,6 @@ export const TweetDetail = () => {
                                 />
                               </Flex>
                             )}
-                          </div>
-                          <div style={{ paddingTop: "8px" }}>
-                            <Message width={"22px"} height={"22px"} />
                           </div>
                         </div>
                       </div>

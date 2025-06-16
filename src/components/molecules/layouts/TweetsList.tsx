@@ -6,11 +6,13 @@ import type { Tweet } from "../../../types/Tweet";
 import { Loading } from "../loading/Loading";
 import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
-import { DashOutline } from "../../atoms/DashOutline";
-import { Message } from "../../atoms/Message";
+import { DashOutline } from "../../atoms/Icon/DashOutline";
+import { Message } from "../../atoms/Icon/Message";
 import { CommentCreateModal } from "../modals/CommentCreateModal";
 import type { PaginatedResponse } from "../../../types/PaginatedResponse";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
+import { Retweet } from "../../atoms/Icon/Retweet";
+import { XLogoView } from "../../atoms/Icon/XLogoView";
 
 export const TweetsList = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -31,10 +33,19 @@ export const TweetsList = () => {
   // 削除のpopover
   const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
 
+  const [retweeted, setRetweeted] = useState<{ [key: number]: boolean }>({});
+
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
       ...prev,
       [tweetId]: newOpen,
+    }));
+  };
+
+  const handleRetweetChange = (tweetId: number, retweet: boolean) => {
+    setRetweeted((prev) => ({
+      ...prev,
+      [tweetId]: retweet,
     }));
   };
 
@@ -50,6 +61,26 @@ export const TweetsList = () => {
       messageApi.error("表示できるTweetがありません");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRetweet = async (id: number) => {
+    try {
+      await authInstance.post(`/api/tweets/${id}/retweet/`);
+      handleRetweetChange(id, !retweeted[id]);
+      fetchTweet(currentPage);
+    } catch (error) {
+      messageApi.error("リツイートできませんでした");
+    }
+  };
+
+  const handleUnRetweet = async (id: number) => {
+    try {
+      await authInstance.delete(`/api/tweets/${id}/unretweet/`);
+      handleRetweetChange(id, !retweeted[id]);
+      fetchTweet(currentPage);
+    } catch (error) {
+      messageApi.error("リツイートを削除できませんでした");
     }
   };
 
@@ -195,24 +226,100 @@ export const TweetsList = () => {
                           )}
                         </div>
                       </Link>
-                      <div style={{ paddingTop: "8px" }}>
-                        <Button
-                          type="text"
-                          onClick={() => handleOpenModal(tweet)}
-                          style={{ padding: 0 }}
-                        >
-                          <Message width={"22px"} height={"22px"} />
-                        </Button>
-                        {selectedTweet?.id === tweet.id && (
-                          <CommentCreateModal
-                            tweet={tweet}
-                            loading={loading}
-                            isModalOpen={isModalOpen}
-                            handleOk={handleOk}
-                            handleCancel={handleCancel}
-                          />
+                      <Flex
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ paddingTop: "8px" }}>
+                          <Button
+                            type="text"
+                            onClick={() => handleOpenModal(tweet)}
+                            style={{ padding: 0 }}
+                          >
+                            <Message width={"22px"} height={"22px"} />
+                          </Button>
+                          {selectedTweet?.id === tweet.id && (
+                            <CommentCreateModal
+                              tweet={tweet}
+                              loading={loading}
+                              isModalOpen={isModalOpen}
+                              handleOk={handleOk}
+                              handleCancel={handleCancel}
+                            />
+                          )}
+                        </div>
+                        {tweet.loginUserRetweeted ? (
+                          <div
+                            style={{
+                              paddingTop: "8px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Button
+                              type="text"
+                              onClick={() => {
+                                handleUnRetweet(tweet.id);
+                              }}
+                              style={{ padding: 0 }}
+                            >
+                              <Retweet
+                                width={"22px"}
+                                height={"22px"}
+                                style={{ color: "#32cd32" }}
+                              />
+                            </Button>
+                            {tweet?.retweetCount === 0 ? (
+                              ""
+                            ) : (
+                              <span style={{ color: "#32cd32" }}>
+                                {tweet.retweetCount}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              paddingTop: "8px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Button
+                              type="text"
+                              onClick={() => {
+                                handleRetweet(tweet.id);
+                              }}
+                              style={{ padding: 0 }}
+                            >
+                              <Retweet width={"22px"} height={"22px"} />
+                            </Button>
+                            {tweet?.retweetCount === 0
+                              ? ""
+                              : tweet.retweetCount}
+                          </div>
                         )}
-                      </div>
+                        <div style={{ paddingTop: "8px" }}>
+                          <Button
+                            type="text"
+                            onClick={() => {}}
+                            style={{ padding: 0 }}
+                          >
+                            <XLogoView width={"22px"} height={"22px"} />
+                          </Button>
+                        </div>
+                        <div style={{ paddingTop: "8px" }}>
+                          <Button
+                            type="text"
+                            onClick={() => {}}
+                            style={{ padding: 0 }}
+                          >
+                            <XLogoView width={"22px"} height={"22px"} />
+                          </Button>
+                        </div>
+                      </Flex>
                     </div>
                   </div>
                 </div>

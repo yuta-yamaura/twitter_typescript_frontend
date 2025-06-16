@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import type { User } from "../../../types/User";
 import { Button, Flex, Popover } from "antd";
 import dayjs from "dayjs";
-import { DashOutline } from "../../atoms/DashOutline";
 import type { ProfileComment } from "../../../types/Comment";
+import { DashOutline } from "../../atoms/Icon/DashOutline";
 
 type ProfileCommentProps = {
   user?: User;
@@ -110,7 +110,7 @@ export const ProfileCommentList = ({
                       style={{ textDecoration: "None", color: "inherit" }}
                     >
                       <div key={comment.id}>
-                        <Flex>{comment.comment}</Flex>
+                        <Flex>{comment.content}</Flex>
                         {comment.image && (
                           <Flex
                             style={{
