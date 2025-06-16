@@ -33,7 +33,7 @@ export const ProfileRetweetsList = ({
             }}
           >
             <div>
-              <div key={retweet.id} style={{ paddingLeft: "8px" }}>
+              <div style={{ paddingLeft: "8px" }}>
                 <div
                   style={{
                     display: "flex",
@@ -70,10 +70,7 @@ export const ProfileRetweetsList = ({
                         <strong>
                           {retweet?.user.accountName ?? "DefaultName"}
                         </strong>
-                        <span>
-                          {" "}
-                          @{retweet?.user.username && retweet.username}
-                        </span>
+                        <span> @{retweet?.user.username ?? ""}</span>
                         <span>
                           {" "}
                           {retweet?.createdAt &&
