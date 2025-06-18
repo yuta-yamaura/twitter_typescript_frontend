@@ -15,6 +15,8 @@ import { DashOutline } from "../../atoms/Icon/DashOutline";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 import { Retweet } from "../../atoms/Icon/Retweet";
 import { XLogoView } from "../../atoms/Icon/XLogoView";
+import { FillLike } from "../../atoms/Icon/FillLike";
+import { OutLineLike } from "../../atoms/Icon/OutLineLike";
 
 export const TweetDetail = () => {
   const { id } = useParams();
@@ -188,13 +190,7 @@ export const TweetDetail = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <div
-                    style={{
-                      paddingTop: "8px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
+                  <div style={{ paddingTop: "8px" }}>
                     {tweet && (
                       <Button
                         type="text"
@@ -247,15 +243,39 @@ export const TweetDetail = () => {
                       {tweet?.retweetCount === 0 ? "" : tweet?.retweetCount}
                     </div>
                   )}
-                  <div style={{ paddingTop: "8px" }}>
-                    <Button
-                      type="text"
-                      onClick={() => {}}
-                      style={{ padding: 0 }}
+                  {tweet?.loginUserLiked ? (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
                     >
-                      <XLogoView width={"22px"} height={"22px"} />
-                    </Button>
-                  </div>
+                      <FillLike
+                        width={"22px"}
+                        height={"22px"}
+                        style={{ color: "#ff1493" }}
+                      />
+                      {tweet.likeCount === 0 ? (
+                        ""
+                      ) : (
+                        <span style={{ color: "#ff1493" }}>
+                          {tweet.likeCount}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <OutLineLike width={"22px"} height={"22px"} />
+                      {tweet?.likeCount === 0 ? "" : tweet?.likeCount}
+                    </div>
+                  )}
                   <div style={{ paddingTop: "8px" }}>
                     <Button
                       type="text"

@@ -7,11 +7,11 @@ type Like = Omit<User, "name" | "isAdmin" | "tweets"> & {
     content: string;
     image: string;
   };
-  retweet: number;
   createdAt: string;
   retweetCount: number;
+  likeCount: number;
 };
 
-export type ProfileRetweet = {
-  retweet: Like[];
+export type ProfileLike = {
+  like: Like[];
 };

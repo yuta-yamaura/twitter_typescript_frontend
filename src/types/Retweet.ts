@@ -10,6 +10,7 @@ type Retweet = Omit<User, "name" | "isAdmin" | "tweets"> & {
   retweet: number;
   createdAt: string;
   retweetCount: number;
+  likeCount: number;
 };
 
 export type ProfileRetweet = {

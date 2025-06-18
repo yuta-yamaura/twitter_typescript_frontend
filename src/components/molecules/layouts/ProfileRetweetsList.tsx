@@ -6,6 +6,7 @@ import { Button } from "../../atoms/Button/Button";
 import { Message } from "../../atoms/Icon/Message";
 import { Retweet } from "../../atoms/Icon/Retweet";
 import { XLogoView } from "../../atoms/Icon/XLogoView";
+import { OutLineLike } from "../../atoms/Icon/OutLineLike";
 
 type ProfileRetweetsListProps = {
   userRetweet?: ProfileRetweet;
@@ -118,46 +119,27 @@ export const ProfileRetweetsList = ({
                       >
                         <Message width={"22px"} height={"22px"} />
                       </div>
-                      {retweet ? (
-                        <div
-                          style={{
-                            paddingTop: "8px",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Retweet
-                            width={"22px"}
-                            height={"22px"}
-                            style={{ color: "#32cd32" }}
-                          />
-                          {retweet.retweetCount === 0 ? (
-                            ""
-                          ) : (
-                            <span style={{ color: "#32cd32" }}>
-                              {retweet.retweetCount}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <div
-                          style={{
-                            paddingTop: "8px",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Retweet width={"22px"} height={"22px"} />
-                        </div>
-                      )}
-                      <div style={{ paddingTop: "8px" }}>
-                        <Button
-                          type="text"
-                          onClick={() => {}}
-                          style={{ padding: 0 }}
-                        >
-                          <XLogoView width={"22px"} height={"22px"} />
-                        </Button>
+                      <div
+                        style={{
+                          paddingTop: "8px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Retweet width={"22px"} height={"22px"} />
+                        {retweet?.retweetCount === 0
+                          ? ""
+                          : retweet.retweetCount}
+                      </div>
+                      <div
+                        style={{
+                          paddingTop: "8px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <OutLineLike width={"22px"} height={"22px"} />
+                        {retweet?.likeCount === 0 ? "" : retweet.likeCount}
                       </div>
                       <div style={{ paddingTop: "8px" }}>
                         <Button
