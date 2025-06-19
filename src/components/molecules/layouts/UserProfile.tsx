@@ -103,6 +103,30 @@ export const UserProfile = () => {
     }
   };
 
+  const handleFollow = async () => {
+    try {
+      await authInstance.post(`/api/users/${id}/follow/`);
+      fetchUserProfile();
+      messageApi.success("フォローしました");
+    } catch (error) {
+      messageApi.error("フォローできませんでした");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUnFollow = async () => {
+    try {
+      await authInstance.delete(`/api/users/${id}/unfollow/`);
+      messageApi.success("フォローを解除しました");
+      fetchUserProfile();
+    } catch (error) {
+      messageApi.error("フォローを解除できませんでした");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUserProfileComment();
     fetchUserProfileRetwet();
@@ -218,8 +242,23 @@ export const UserProfile = () => {
                       handleCancel={handleCancel}
                     />
                   </>
+                ) : user?.following ? (
+                  <Button
+                    onClick={handleUnFollow}
+                    style={{ borderRadius: "100px", fontWeight: "bold" }}
+                  >
+                    フォロー中
+                  </Button>
                 ) : (
-                  <Button type="text" onClick={showModal}>
+                  <Button
+                    onClick={handleFollow}
+                    style={{
+                      backgroundColor: "black",
+                      color: "white",
+                      borderRadius: "100px",
+                      fontWeight: "bold",
+                    }}
+                  >
                     フォロー
                   </Button>
                 )}

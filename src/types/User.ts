@@ -15,5 +15,6 @@ export type User = {
   isAdmin: boolean;
   createdAt: string;
   loginUser: boolean;
+  following: boolean;
   tweets?: Tweet[];
 };
