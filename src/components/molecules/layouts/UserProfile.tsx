@@ -44,7 +44,9 @@ export const UserProfile = () => {
   });
 
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
@@ -66,7 +68,9 @@ export const UserProfile = () => {
 
   const fetchUserProfileComment = async () => {
     try {
-      const res = await authInstance.get<ProfileComment>(`/api/user/${id}/comments/`);
+      const res = await authInstance.get<ProfileComment>(
+        `/api/user/${id}/comments/`
+      );
       setUserComment(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -77,7 +81,9 @@ export const UserProfile = () => {
 
   const fetchUserProfileRetwet = async () => {
     try {
-      const res = await authInstance.get<ProfileRetweet>(`/api/user/${id}/retweet/`);
+      const res = await authInstance.get<ProfileRetweet>(
+        `/api/user/${id}/retweet/`
+      );
       setUserRetweet(res.data);
     } catch (error) {
       messageApi.error("データが取得できませんでした");
@@ -199,17 +205,23 @@ export const UserProfile = () => {
                 />
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button type="text" onClick={showModal}>
-                  プロフィールを編集
-                </Button>
-                {user && (
-                  <UserProfileUpdateModal
-                    user={user}
-                    isLoading={isLoading}
-                    isModalOpen={isModalOpen}
-                    handleOk={handleOk}
-                    handleCancel={handleCancel}
-                  />
+                {user?.loginUser ? (
+                  <>
+                    <Button type="text" onClick={showModal}>
+                      プロフィールを編集
+                    </Button>
+                    <UserProfileUpdateModal
+                      user={user}
+                      isLoading={isLoading}
+                      isModalOpen={isModalOpen}
+                      handleOk={handleOk}
+                      handleCancel={handleCancel}
+                    />
+                  </>
+                ) : (
+                  <Button type="text" onClick={showModal}>
+                    フォロー
+                  </Button>
                 )}
               </div>
             </div>

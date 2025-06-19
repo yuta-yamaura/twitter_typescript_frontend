@@ -14,5 +14,6 @@ export type User = {
   webSite: string;
   isAdmin: boolean;
   createdAt: string;
+  loginUser: boolean;
   tweets?: Tweet[];
 };
