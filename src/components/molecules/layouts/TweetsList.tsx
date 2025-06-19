@@ -13,6 +13,8 @@ import type { PaginatedResponse } from "../../../types/PaginatedResponse";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 import { Retweet } from "../../atoms/Icon/Retweet";
 import { XLogoView } from "../../atoms/Icon/XLogoView";
+import { FillLike } from "../../atoms/Icon/FillLike";
+import { OutLineLike } from "../../atoms/Icon/OutLineLike";
 
 export const TweetsList = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -31,9 +33,11 @@ export const TweetsList = () => {
   });
 
   // 削除のpopover
-  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
-
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
   const [retweeted, setRetweeted] = useState<{ [key: number]: boolean }>({});
+  const [likeed, setLikeed] = useState<{ [key: number]: boolean }>({});
 
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
@@ -46,6 +50,13 @@ export const TweetsList = () => {
     setRetweeted((prev) => ({
       ...prev,
       [tweetId]: retweet,
+    }));
+  };
+
+  const handleLikeChange = (tweetId: number, like: boolean) => {
+    setLikeed((prev) => ({
+      ...prev,
+      [tweetId]: like,
     }));
   };
 
@@ -81,6 +92,26 @@ export const TweetsList = () => {
       fetchTweet(currentPage);
     } catch (error) {
       messageApi.error("リツイートを削除できませんでした");
+    }
+  };
+
+  const handleLike = async (id: number) => {
+    try {
+      await authInstance.post(`/api/tweets/${id}/like/`);
+      handleLikeChange(id, !likeed[id]);
+      fetchTweet(currentPage);
+    } catch (error) {
+      messageApi.error("いいねできませんでした");
+    }
+  };
+
+  const handleUnLike = async (id: number) => {
+    try {
+      await authInstance.delete(`/api/tweets/${id}/unlike/`);
+      handleLikeChange(id, !likeed[id]);
+      fetchTweet(currentPage);
+    } catch (error) {
+      messageApi.error("いいねを削除できませんでした");
     }
   };
 
@@ -301,15 +332,55 @@ export const TweetsList = () => {
                               : tweet.retweetCount}
                           </div>
                         )}
-                        <div style={{ paddingTop: "8px" }}>
-                          <Button
-                            type="text"
-                            onClick={() => {}}
-                            style={{ padding: 0 }}
+                        {tweet.loginUserLiked ? (
+                          <div
+                            style={{
+                              paddingTop: "8px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
                           >
-                            <XLogoView width={"22px"} height={"22px"} />
-                          </Button>
-                        </div>
+                            <Button
+                              type="text"
+                              onClick={() => {
+                                handleUnLike(tweet.id);
+                              }}
+                              style={{ padding: 0 }}
+                            >
+                              <FillLike
+                                width={"22px"}
+                                height={"22px"}
+                                style={{ color: "#ff1493" }}
+                              />
+                            </Button>
+                            {tweet?.likeCount === 0 ? (
+                              ""
+                            ) : (
+                              <span style={{ color: "#ff1493" }}>
+                                {tweet.likeCount}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              paddingTop: "8px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Button
+                              type="text"
+                              onClick={() => {
+                                handleLike(tweet.id);
+                              }}
+                              style={{ padding: 0 }}
+                            >
+                              <OutLineLike width={"22px"} height={"22px"} />
+                            </Button>
+                            {tweet?.likeCount === 0 ? "" : tweet.likeCount}
+                          </div>
+                        )}
                         <div style={{ paddingTop: "8px" }}>
                           <Button
                             type="text"

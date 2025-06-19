@@ -17,6 +17,7 @@ import { ProfileRetweetsList } from "./ProfileRetweetsList";
 import type { ProfileComment } from "../../../types/Comment";
 import { useCommentDelete } from "../../../utils/useCommentDelete";
 import type { ProfileRetweet } from "../../../types/Retweet";
+import type { ProfileLike } from "../../../types/Like";
 
 export const UserProfile = () => {
   const { id } = useParams();
@@ -25,6 +26,7 @@ export const UserProfile = () => {
   const [user, setUser] = useState<User>();
   const [userComment, setUserComment] = useState<ProfileComment>();
   const [userRetweet, setUserRetweet] = useState<ProfileRetweet>();
+  const [userLike, setUserLike] = useState<ProfileLike>();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,9 +86,21 @@ export const UserProfile = () => {
     }
   };
 
+  const fetchUserProfileLike = async () => {
+    try {
+      const res = await authInstance.get<ProfileLike>(`/api/user/${id}/like/`);
+      setUserLike(res.data);
+    } catch (error) {
+      messageApi.error("データが取得できませんでした");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUserProfileComment();
     fetchUserProfileRetwet();
+    fetchUserProfileLike();
     fetchUserProfile();
   }, []);
 
@@ -128,7 +142,7 @@ export const UserProfile = () => {
           />
         );
       case "likes":
-        return <ProfileLikesList />;
+        return <ProfileLikesList userLike={userLike} />;
       case "retweets":
         return <ProfileRetweetsList userRetweet={userRetweet} />;
       default:
