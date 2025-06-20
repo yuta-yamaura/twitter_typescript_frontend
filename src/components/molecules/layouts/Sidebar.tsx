@@ -1,4 +1,9 @@
 import Sider from "antd/es/layout/Sider";
+import { Link } from "react-router-dom";
+import { Button } from "../../atoms/Button/Button";
+import { BellOutline } from "../../atoms/Icon/BellOutLine";
+import { Space } from "antd";
+import { XLogoView } from "../../atoms/Icon/XLogoView";
 
 export const Sidebar = () => {
   return (
@@ -8,7 +13,16 @@ export const Sidebar = () => {
         collapsedWidth="0"
         style={{ backgroundColor: "#ffffff" }}
       >
-        <div>Sidebar</div>
+        <XLogoView width="30px" height="30px" />
+        <Link
+          to={"/notification"}
+          style={{ textDecoration: "None", color: "inherit" }}
+        >
+          <Button type="text" style={{ borderRadius: "25px" }}>
+            <BellOutline width="30px" height="30px" />
+            <Space style={{ fontSize: "30px", marginLeft: "12px" }}>通知</Space>
+          </Button>
+        </Link>
       </Sider>
     </>
   );
