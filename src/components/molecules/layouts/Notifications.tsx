@@ -6,7 +6,7 @@ import { Loading } from "../loading/Loading";
 import type { Notification } from "../../../types/Notification";
 import { FillLike } from "../../atoms/Icon/FillLike";
 import { Retweet } from "../../atoms/Icon/Retweet";
-import { UserOutline } from "../../atoms/Icon/UserOutLine";
+import { UserOutline } from "../../atoms/Icon/UserOutline";
 
 export const Notifications = () => {
   const [messageApi, contextHolder] = message.useMessage();

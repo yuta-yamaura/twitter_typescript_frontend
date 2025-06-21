@@ -1,9 +1,9 @@
 import Sider from "antd/es/layout/Sider";
 import { Link } from "react-router-dom";
 import { Button } from "../../atoms/Button/Button";
-import { BellOutline } from "../../atoms/Icon/BellOutLine";
 import { Space } from "antd";
 import { XLogoView } from "../../atoms/Icon/XLogoView";
+import { BellOutline } from "../../atoms/Icon/BellOutline";
 
 export const Sidebar = () => {
   return (
