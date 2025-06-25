@@ -14,6 +14,15 @@ export const authInstance = axios.create({
   headers: { "Content-type": "multipart/form-data" },
 });
 
+// instanceにBearer tokenを事前に付与
+instance.interceptors.request.use((config) => {
+  const token = getAuthToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // authInstanceにBearer tokenを事前に付与
 authInstance.interceptors.request.use((config) => {
   const token = getAuthToken();
