@@ -31,6 +31,7 @@ export const DirectMessageList = () => {
       console.log("Error!");
     },
     onMessage: (msg) => {
+      setIsLoading(true);
       const data = JSON.parse(msg.data);
       // 同じメッセージが複数回処理されるのを防ぐ
       if (
@@ -41,6 +42,7 @@ export const DirectMessageList = () => {
         setNewMessage((prev_msg) => [...prev_msg, data.new_message]);
       }
       setDirectMessage("");
+      setIsLoading(false);
     },
   });
 
@@ -179,7 +181,9 @@ export const DirectMessageList = () => {
                             backgroundColor: "#1DA1F2",
                             color: "white",
                             padding: "8px 12px",
-                            borderRadius: "18px",
+                            borderTopLeftRadius: "18px",
+                            borderTopRightRadius: "18px",
+                            borderBottomLeftRadius: "18px",
                             maxWidth: "70%",
                             wordWrap: "break-word",
                           }}
