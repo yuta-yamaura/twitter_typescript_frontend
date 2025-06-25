@@ -23,6 +23,17 @@ export const Sidebar = () => {
             <Space style={{ fontSize: "30px", marginLeft: "12px" }}>通知</Space>
           </Button>
         </Link>
+        <Link
+          to={"/message"}
+          style={{ textDecoration: "None", color: "inherit" }}
+        >
+          <Button type="text" style={{ borderRadius: "25px" }}>
+            <BellOutline width="30px" height="30px" />
+            <Space style={{ fontSize: "30px", marginLeft: "12px" }}>
+              メッセージ
+            </Space>
+          </Button>
+        </Link>
       </Sider>
     </>
   );
