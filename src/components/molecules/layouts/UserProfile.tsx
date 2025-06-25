@@ -139,11 +139,8 @@ export const UserProfile = () => {
   };
 
   const handleOk = async () => {
-    setIsLoading(true);
-    setUser(user);
     setIsModalOpen(false);
-    await fetchUserProfile();
-    setIsLoading(false);
+    fetchUserProfile();
   };
 
   const handleCancel = () => {
