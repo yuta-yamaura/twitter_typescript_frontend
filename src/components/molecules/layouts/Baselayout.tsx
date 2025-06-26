@@ -1,7 +1,7 @@
 import { Layout, theme } from "antd";
 import { useEffect, useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
-import { decodeJWT, getAuthToken } from "../../../utils/auth";
+import { decodeJWT, getAuthToken, removeToken } from "../../../utils/auth";
 
 type BaselayoutProps = {
   children?: ReactNode;
@@ -9,10 +9,25 @@ type BaselayoutProps = {
 
 export const Baselayout = ({ children }: BaselayoutProps) => {
   const { Header, Footer, Content } = Layout;
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState<number | undefined>(undefined);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+    removeToken();
+    window.location.href = "/login";
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     const token = getAuthToken();
@@ -35,7 +50,13 @@ export const Baselayout = ({ children }: BaselayoutProps) => {
       }}
     >
       <Layout style={{ minHeight: "100%" }}>
-        <Sidebar userId={userId} />
+        <Sidebar
+          userId={userId}
+          handleOpenModal={handleOpenModal}
+          isModalOpen={isModalOpen}
+          handleOk={handleOk}
+          handleCancel={handleCancel}
+        />
         <Layout>
           <Header style={{ padding: 0, background: colorBgContainer }} />
           <Content

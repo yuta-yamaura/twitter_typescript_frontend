@@ -6,12 +6,24 @@ import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { BellOutline } from "../../atoms/Icon/BellOutline";
 import { BookmarkOutline } from "../../atoms/Icon/BookmarkOutline";
 import { Mail } from "../../atoms/Icon/Mail";
+import { UserDelete } from "../../atoms/Icon/UserDelete";
+import { UserDeleteModal } from "../modals/UserDeleteModal";
 
 type SidebarProps = {
   userId?: number;
+  isModalOpen: boolean;
+  handleOpenModal: () => void;
+  handleOk: () => void;
+  handleCancel: () => void;
 };
 
-export const Sidebar = ({ userId }: SidebarProps) => {
+export const Sidebar = ({
+  userId,
+  isModalOpen,
+  handleOpenModal,
+  handleOk,
+  handleCancel,
+}: SidebarProps) => {
   return (
     <>
       <Sider
@@ -51,6 +63,19 @@ export const Sidebar = ({ userId }: SidebarProps) => {
             </Space>
           </Button>
         </Link>
+        <Button
+          type="text"
+          style={{ borderRadius: "25px" }}
+          onClick={handleOpenModal}
+        >
+          <UserDelete width="25px" height="25px" />
+          <Space style={{ fontSize: "25px", marginLeft: "12px" }}>退会</Space>
+        </Button>
+        <UserDeleteModal
+          isModalOpen={isModalOpen}
+          handleCancel={handleCancel}
+          handleOk={handleOk}
+        />
       </Sider>
     </>
   );
