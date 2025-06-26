@@ -4,8 +4,14 @@ import { Button } from "../../atoms/Button/Button";
 import { Space } from "antd";
 import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { BellOutline } from "../../atoms/Icon/BellOutline";
+import { BookmarkOutline } from "../../atoms/Icon/BookmarkOutline";
+import { Mail } from "../../atoms/Icon/Mail";
 
-export const Sidebar = () => {
+type SidebarProps = {
+  userId?: number;
+};
+
+export const Sidebar = ({ userId }: SidebarProps) => {
   return (
     <>
       <Sider
@@ -19,8 +25,8 @@ export const Sidebar = () => {
           style={{ textDecoration: "None", color: "inherit" }}
         >
           <Button type="text" style={{ borderRadius: "25px" }}>
-            <BellOutline width="30px" height="30px" />
-            <Space style={{ fontSize: "30px", marginLeft: "12px" }}>通知</Space>
+            <BellOutline width="25px" height="25px" />
+            <Space style={{ fontSize: "25px", marginLeft: "12px" }}>通知</Space>
           </Button>
         </Link>
         <Link
@@ -28,9 +34,20 @@ export const Sidebar = () => {
           style={{ textDecoration: "None", color: "inherit" }}
         >
           <Button type="text" style={{ borderRadius: "25px" }}>
-            <BellOutline width="30px" height="30px" />
-            <Space style={{ fontSize: "30px", marginLeft: "12px" }}>
+            <Mail width="25px" height="25px" />
+            <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
               メッセージ
+            </Space>
+          </Button>
+        </Link>
+        <Link
+          to={`/${userId}/bookmark`}
+          style={{ textDecoration: "None", color: "inherit" }}
+        >
+          <Button type="text" style={{ borderRadius: "25px" }}>
+            <BookmarkOutline width="25px" height="25px" />
+            <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
+              ブックマーク
             </Space>
           </Button>
         </Link>

@@ -1,6 +1,7 @@
 import { Layout, theme } from "antd";
-import { type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
+import { decodeJWT, getAuthToken } from "../../../utils/auth";
 
 type BaselayoutProps = {
   children?: ReactNode;
@@ -8,9 +9,20 @@ type BaselayoutProps = {
 
 export const Baselayout = ({ children }: BaselayoutProps) => {
   const { Header, Footer, Content } = Layout;
+  const [userId, setUserId] = useState<number | undefined>(undefined);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if (token) {
+      const decodeToken = decodeJWT(token);
+      if (decodeToken && decodeToken.user_id) {
+        setUserId(decodeToken.user_id);
+      }
+    }
+  }, []); // 依存配列に空配列を指定し無限ループを防ぐ
 
   return (
     <div
@@ -23,7 +35,7 @@ export const Baselayout = ({ children }: BaselayoutProps) => {
       }}
     >
       <Layout style={{ minHeight: "100%" }}>
-        <Sidebar />
+        <Sidebar userId={userId} />
         <Layout>
           <Header style={{ padding: 0, background: colorBgContainer }} />
           <Content

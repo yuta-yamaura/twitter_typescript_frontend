@@ -7,6 +7,7 @@ import { UserProfile } from "./components/molecules/layouts/UserProfile";
 import { Notifications } from "./components/molecules/layouts/Notifications";
 import { DirectMessageList } from "./components/molecules/layouts/DirectMessageList";
 import { MessageUserList } from "./components/molecules/layouts/MessageUserList";
+import { UserBookmarkList } from "./components/molecules/layouts/UserBookmarkList";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/notification" element={<Notifications />} />
         <Route path="/message" element={<MessageUserList />} />
         <Route path="/message/:sender_id/:recipient_name" element={<DirectMessageList />}/>
+        <Route path="/:id/bookmark" element={<UserBookmarkList />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>

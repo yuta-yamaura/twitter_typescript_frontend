@@ -10,4 +10,5 @@ export type Tweet = {
   likeCount?: number;
   loginUserRetweeted: boolean;
   loginUserLiked: boolean;
+  loginUserBookmarked: boolean;
 };

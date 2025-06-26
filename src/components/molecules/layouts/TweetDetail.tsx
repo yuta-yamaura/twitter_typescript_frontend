@@ -14,9 +14,10 @@ import type { PaginatedResponse } from "../../../types/PaginatedResponse";
 import { DashOutline } from "../../atoms/Icon/DashOutline";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 import { Retweet } from "../../atoms/Icon/Retweet";
-import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { FillLike } from "../../atoms/Icon/FillLike";
 import { OutLineLike } from "../../atoms/Icon/OutLineLike";
+import { BookmarkFill } from "../../atoms/Icon/BookmarkFill";
+import { BookmarkOutline } from "../../atoms/Icon/BookmarkOutline";
 
 export const TweetDetail = () => {
   const { id } = useParams();
@@ -276,15 +277,31 @@ export const TweetDetail = () => {
                       {tweet?.likeCount === 0 ? "" : tweet?.likeCount}
                     </div>
                   )}
-                  <div style={{ paddingTop: "8px" }}>
-                    <Button
-                      type="text"
-                      onClick={() => {}}
-                      style={{ padding: 0 }}
+                  {tweet?.loginUserBookmarked ? (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
                     >
-                      <XLogoView width={"22px"} height={"22px"} />
-                    </Button>
-                  </div>
+                      <BookmarkFill
+                        width={"22px"}
+                        height={"22px"}
+                        style={{ color: "#00bfff" }}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <BookmarkOutline width={"22px"} height={"22px"} />
+                    </div>
+                  )}
                 </Flex>
               </div>
             </Flex>
