@@ -35,7 +35,10 @@ export const Sidebar = ({
       >
         <XLogoView width="30px" height="30px" />
         <Link to={`/`} style={{ textDecoration: "None", color: "inherit" }}>
-          <Button type="text" style={{ borderRadius: "25px" }}>
+          <Button
+            type="text"
+            style={{ borderRadius: "25px", paddingTop: "24px" }}
+          >
             <HomeOutline width="25px" height="25px" />
             <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
               ホーム
@@ -46,7 +49,10 @@ export const Sidebar = ({
           to={"/notification"}
           style={{ textDecoration: "None", color: "inherit" }}
         >
-          <Button type="text" style={{ borderRadius: "25px" }}>
+          <Button
+            type="text"
+            style={{ borderRadius: "25px", paddingTop: "24px" }}
+          >
             <BellOutline width="25px" height="25px" />
             <Space style={{ fontSize: "25px", marginLeft: "12px" }}>通知</Space>
           </Button>
@@ -55,7 +61,10 @@ export const Sidebar = ({
           to={"/message"}
           style={{ textDecoration: "None", color: "inherit" }}
         >
-          <Button type="text" style={{ borderRadius: "25px" }}>
+          <Button
+            type="text"
+            style={{ borderRadius: "25px", paddingTop: "24px" }}
+          >
             <Mail width="25px" height="25px" />
             <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
               メッセージ
@@ -66,7 +75,10 @@ export const Sidebar = ({
           to={`/${userId}/bookmark`}
           style={{ textDecoration: "None", color: "inherit" }}
         >
-          <Button type="text" style={{ borderRadius: "25px" }}>
+          <Button
+            type="text"
+            style={{ borderRadius: "25px", paddingTop: "24px" }}
+          >
             <BookmarkOutline width="25px" height="25px" />
             <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
               ブックマーク
@@ -77,7 +89,10 @@ export const Sidebar = ({
           to={`/user/${userId}`}
           style={{ textDecoration: "None", color: "inherit" }}
         >
-          <Button type="text" style={{ borderRadius: "25px" }}>
+          <Button
+            type="text"
+            style={{ borderRadius: "25px", paddingTop: "24px" }}
+          >
             <UserOutline width="25px" height="25px" />
             <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
               プロフィール
@@ -86,7 +101,7 @@ export const Sidebar = ({
         </Link>
         <Button
           type="text"
-          style={{ borderRadius: "25px" }}
+          style={{ borderRadius: "25px", paddingTop: "24px" }}
           onClick={handleOpenModal}
         >
           <UserDelete width="25px" height="25px" />
