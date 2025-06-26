@@ -87,7 +87,7 @@ export const UserBookmarkList = () => {
                             }}
                           >
                             <div>
-                              <strong>
+                              <strong style={{ fontSize: "16px" }}>
                                 {bookmark?.user.accountName ?? "DefaultName"}
                               </strong>
                               <span> @{bookmark?.user.username ?? ""}</span>

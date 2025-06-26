@@ -326,7 +326,15 @@ export const UserProfile = () => {
               </Flex>
             </div>
 
-            <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+                width: "100%",
+                padding: "0 8px",
+              }}
+            >
               <Link
                 to={`/user/${id}?tab=posts`}
                 style={{

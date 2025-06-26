@@ -227,7 +227,7 @@ export const TweetsList = () => {
                         }}
                       >
                         <div>
-                          <strong>
+                          <strong style={{ fontSize: "16px" }}>
                             {tweet.user.accountName ?? "DefaultName"}
                           </strong>
                           <span> @{tweet.user.username}</span>

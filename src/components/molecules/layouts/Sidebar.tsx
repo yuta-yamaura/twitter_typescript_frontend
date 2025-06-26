@@ -8,6 +8,8 @@ import { BookmarkOutline } from "../../atoms/Icon/BookmarkOutline";
 import { Mail } from "../../atoms/Icon/Mail";
 import { UserDelete } from "../../atoms/Icon/UserDelete";
 import { UserDeleteModal } from "../modals/UserDeleteModal";
+import { UserOutline } from "../../atoms/Icon/UserOutline";
+import { HomeOutline } from "../../atoms/Icon/HomeOutline";
 
 type SidebarProps = {
   userId?: number;
@@ -32,6 +34,14 @@ export const Sidebar = ({
         style={{ backgroundColor: "#ffffff" }}
       >
         <XLogoView width="30px" height="30px" />
+        <Link to={`/`} style={{ textDecoration: "None", color: "inherit" }}>
+          <Button type="text" style={{ borderRadius: "25px" }}>
+            <HomeOutline width="25px" height="25px" />
+            <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
+              ホーム
+            </Space>
+          </Button>
+        </Link>
         <Link
           to={"/notification"}
           style={{ textDecoration: "None", color: "inherit" }}
@@ -60,6 +70,17 @@ export const Sidebar = ({
             <BookmarkOutline width="25px" height="25px" />
             <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
               ブックマーク
+            </Space>
+          </Button>
+        </Link>
+        <Link
+          to={`/user/${userId}`}
+          style={{ textDecoration: "None", color: "inherit" }}
+        >
+          <Button type="text" style={{ borderRadius: "25px" }}>
+            <UserOutline width="25px" height="25px" />
+            <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
+              プロフィール
             </Space>
           </Button>
         </Link>

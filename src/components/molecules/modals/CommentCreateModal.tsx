@@ -27,7 +27,7 @@ export const CommentCreateModal = ({
 
   const form = useForm<CommentForm>({
     defaultValues: {
-      comment: "",
+      content: "",
       image: undefined,
     },
     resolver: zodResolver(CommentSchema),
@@ -38,7 +38,7 @@ export const CommentCreateModal = ({
   ) => {
     try {
       const formData = new FormData();
-      formData.append("comment", data.comment);
+      formData.append("content", data.content);
       if (data.image && data.image.length > 0) {
         formData.append("image", data.image[0]);
       }
@@ -68,7 +68,7 @@ export const CommentCreateModal = ({
           <div>画像</div>
           <InputField name="image" type="file" register={form.register} />
           <div>コメント</div>
-          <InputField name="comment" type="text" register={form.register} />
+          <InputField name="content" type="text" register={form.register} />
           <Flex justify="end" gap="small" style={{ marginTop: "16px" }}>
             <Button onClick={handleCancel}>キャンセル</Button>
             <Button
