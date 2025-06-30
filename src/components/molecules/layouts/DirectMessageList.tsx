@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loading } from "../loading/Loading";
-import useWebSocket from "react-use-websocket";
 import { useParams } from "react-router-dom";
 import type { DirectMessage } from "../../../types/DirectMessage";
 import dayjs from "dayjs";
@@ -9,49 +8,43 @@ import { instance } from "../../../utils/client";
 import { Baselayout } from "./Baselayout";
 import { Button } from "../../atoms/Button/Button";
 import { SendOutline } from "../../atoms/Icon/SendOutline";
+import { getAuthToken } from "../../../utils/auth";
+import { useSentMessage } from "../../../utils/useSentMessage";
 
 export const DirectMessageList = () => {
-  const { sender_id, recipient_name } = useParams();
-  const socketUrl = `ws://127.0.0.1:8000/ws/${sender_id}/${recipient_name}`;
+  const { username } = useParams();
+  const token = getAuthToken();
   const [isLoading, setIsLoading] = useState(false);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [newMessage, setNewMessage] = useState<DirectMessage[]>([]);
   const [chatHistory, setChatHistory] = useState<DirectMessage[]>([]);
   const [directMessage, setDirectMessage] = useState("");
-  const processedMessages = useRef<Set<string>>(new Set());
   const [messageApi, contextHolder] = message.useMessage();
 
-  const { sendJsonMessage } = useWebSocket(socketUrl, {
-    onOpen: () => {
+  const connectWebSocket = () => {
+    const ws = new WebSocket(
+      `ws://127.0.0.1:8000/ws/${username}?token=${token}`
+    );
+    ws.onopen = () => {
       console.log("Connected!");
-    },
-    onClose: () => {
-      console.log("Closed!");
-    },
-    onError: () => {
-      console.log("Error!");
-    },
-    onMessage: (msg) => {
-      setIsLoading(true);
-      const data = JSON.parse(msg.data);
-      // 同じメッセージが複数回処理されるのを防ぐ
-      if (
-        data.new_message &&
-        !processedMessages.current.has(JSON.stringify(data.new_message))
-      ) {
-        processedMessages.current.add(JSON.stringify(data.new_message));
-        setNewMessage((prev_msg) => [...prev_msg, data.new_message]);
-      }
-      setDirectMessage("");
+      setSocket(ws);
       setIsLoading(false);
-    },
-  });
+    };
+    ws.onmessage = (msg) => {
+      setMessagesFnc(JSON.parse(msg.data));
+    };
+    (ws.onclose = () => {
+      console.log("Closed!");
+    }),
+      (ws.onerror = () => {
+        console.log("Error!");
+      });
+  };
 
   const fetchDMHistory = useCallback(async () => {
-    if (!recipient_name) return;
+    if (!username) return;
     try {
-      const res = await instance.get(
-        `/api/chat-history/${sender_id}/${recipient_name}/`
-      );
+      const res = await instance.get(`/api/chat-history/${username}/`);
       setChatHistory(res.data);
     } catch (error) {
       messageApi.error("メッセージの取得に失敗しました");
@@ -59,6 +52,32 @@ export const DirectMessageList = () => {
   }, []);
 
   useEffect(() => {
+    fetchDMHistory();
+  }, []);
+
+  const setMessagesFnc = (value: any) => {
+    // 送信者の送信メッセージは受信と判定させない処理
+    if (value.new_message) {
+      return;
+    }
+  };
+
+  const sendMessage = () => {
+    const messageData = {
+      type: "message",
+      content: directMessage,
+    };
+    socket?.send(JSON.stringify(messageData));
+
+    if (username) {
+      const sentMessage = useSentMessage(directMessage, username);
+      setNewMessage((prev_msg) => [...prev_msg, sentMessage]);
+    }
+    setDirectMessage("");
+  };
+
+  useEffect(() => {
+    connectWebSocket();
     fetchDMHistory();
   }, []);
 
@@ -77,7 +96,7 @@ export const DirectMessageList = () => {
                     key={chat.id}
                     style={{ width: "100%", marginBottom: "12px" }}
                   >
-                    {Number(chat.sender.id) === Number(sender_id) &&
+                    {chat.sender.username !== username &&
                     chat.content !== null ? (
                       <div
                         style={{
@@ -231,9 +250,7 @@ export const DirectMessageList = () => {
                       }}
                     >
                       <Button
-                        onClick={() => {
-                          sendJsonMessage({ type: "message", directMessage });
-                        }}
+                        onClick={sendMessage}
                         type="text"
                         style={{
                           marginTop: "-33px",

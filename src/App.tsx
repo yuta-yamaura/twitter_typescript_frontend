@@ -18,7 +18,7 @@ function App() {
         <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/notification" element={<Notifications />} />
         <Route path="/message" element={<MessageUserList />} />
-        <Route path="/message/:sender_id/:recipient_name" element={<DirectMessageList />}/>
+        <Route path="/message/:username" element={<DirectMessageList />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>
