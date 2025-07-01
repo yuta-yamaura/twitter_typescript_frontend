@@ -28,84 +28,79 @@ export const MessageUserList = () => {
     fetchDMHistory();
   }, []);
 
+  if (isLoading) return <Loading />;
   return (
-    <>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <Baselayout>
-          {contextHolder}
-          {messageGroup.map((messageList) => (
-            <div
-              key={messageList.id}
-              style={{
-                border: "solid 1px",
-                borderColor: "#f5f5f5",
-                width: "100%",
-                margin: "0 auto",
-              }}
-            >
+    <Baselayout>
+      {contextHolder}
+      {messageGroup.map((messageList) => (
+        <div
+          key={messageList.id}
+          style={{
+            border: "solid 1px",
+            borderColor: "#f5f5f5",
+            width: "100%",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              padding: "12px 16px",
+            }}
+          >
+            <div>
               <div
                 style={{
-                  padding: "12px 16px",
+                  display: "flex",
                 }}
               >
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                    }}
-                  >
-                    <Link
-                      to={`/message/${messageList.user.username}`}
-                      style={{ textDecoration: "None", color: "inherit" }}
-                    >
-                      <div style={{ display: "flex" }}>
-                        <img
-                          src={
-                            messageList.user.image
-                              ? messageList.user.image
-                              : "../../../defaultAccountImage.png"
-                          }
-                          style={{
-                            width: "45px",
-                            height: "45px",
-                            borderRadius: "50%",
-                            marginRight: "8px",
-                          }}
-                        />
-                        <div style={{ width: "100%" }}>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div>
-                              <strong>
-                                {messageList.user.accountName ?? "DefaultName"}
-                              </strong>
-                              <span> @{messageList.user.username}</span>
-                              <span>
-                                {" "}
-                                {messageList.createdAt &&
-                                  dayjs(messageList.createdAt).format(
-                                    "YYYY年M月D日"
-                                  )}
-                              </span>
-                            </div>
-                          </div>
+                <Link
+                  to={`/message/${messageList.user.username}`}
+                  style={{ textDecoration: "None", color: "inherit" }}
+                >
+                  <div style={{ display: "flex" }}>
+                    <img
+                      src={
+                        messageList.user.image
+                          ? messageList.user.image
+                          : "../../../defaultAccountImage.png"
+                      }
+                      style={{
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                        marginRight: "8px",
+                      }}
+                    />
+                    <div style={{ width: "100%" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div>
+                          <strong>
+                            {messageList.user.accountName ?? "DefaultName"}
+                          </strong>
+                          <span> @{messageList.user.username}</span>
+                          <span>
+                            {" "}
+                            {messageList.createdAt &&
+                              dayjs(messageList.createdAt).format(
+                                "YYYY年M月D日"
+                              )}
+                          </span>
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   </div>
-                </div>
+                </Link>
               </div>
             </div>
-          ))}
-        </Baselayout>
-      )}
-    </>
+          </div>
+        </div>
+      ))}
+    </Baselayout>
   );
 };
