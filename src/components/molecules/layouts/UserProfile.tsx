@@ -1,6 +1,6 @@
 import { Flex, message } from "antd";
 import { useParams, useSearchParams } from "react-router-dom";
-import { authInstance } from "../../../utils/client";
+import { authInstance, instance } from "../../../utils/client";
 import { useEffect, useState } from "react";
 import { Baselayout } from "./Baselayout";
 import dayjs from "dayjs";
@@ -18,6 +18,7 @@ import type { ProfileComment } from "../../../types/Comment";
 import { useCommentDelete } from "../../../utils/useCommentDelete";
 import type { ProfileRetweet } from "../../../types/Retweet";
 import type { ProfileLike } from "../../../types/Like";
+import { Mail } from "../../atoms/Icon/Mail";
 
 export const UserProfile = () => {
   const { id } = useParams();
@@ -127,6 +128,14 @@ export const UserProfile = () => {
     }
   };
 
+  const createMessageGroup = async (id: number) => {
+    try {
+      await instance.post(`/api/message-groups/${id}/`);
+    } catch (error) {
+      messageApi.error("メッセージグループを作成できませんでした");
+    }
+  };
+
   useEffect(() => {
     fetchUserProfileComment();
     fetchUserProfileRetwet();
@@ -185,7 +194,6 @@ export const UserProfile = () => {
           <Loading />
         ) : (
           <div
-            key={id}
             style={{
               border: "solid 1px",
               borderColor: "#f5f5f5",
@@ -240,24 +248,63 @@ export const UserProfile = () => {
                     />
                   </>
                 ) : user?.following ? (
-                  <Button
-                    onClick={handleUnFollow}
-                    style={{ borderRadius: "100px", fontWeight: "bold" }}
-                  >
-                    フォロー中
-                  </Button>
+                  <>
+                    <Link
+                      to={`/message`}
+                      style={{ textDecoration: "None", color: "inherit" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          createMessageGroup(user.id);
+                        }}
+                        style={{ padding: 5, borderRadius: "50%" }}
+                      >
+                        <Mail width={"22px"} height={"22px"} />
+                      </Button>
+                    </Link>
+                    <Button
+                      onClick={handleUnFollow}
+                      style={{
+                        borderRadius: "100px",
+                        fontWeight: "bold",
+                        marginLeft: "8px",
+                      }}
+                    >
+                      フォロー中
+                    </Button>
+                  </>
                 ) : (
-                  <Button
-                    onClick={handleFollow}
-                    style={{
-                      backgroundColor: "black",
-                      color: "white",
-                      borderRadius: "100px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    フォロー
-                  </Button>
+                  <>
+                    {user?.id && (
+                      <>
+                        <Link
+                          to={`/message`}
+                          style={{ textDecoration: "None", color: "inherit" }}
+                        >
+                          <Button
+                            onClick={() => {
+                              createMessageGroup(user.id);
+                            }}
+                            style={{ padding: 5, borderRadius: "50%" }}
+                          >
+                            <Mail width={"22px"} height={"22px"} />
+                          </Button>
+                        </Link>
+                        <Button
+                          onClick={handleFollow}
+                          style={{
+                            backgroundColor: "black",
+                            color: "white",
+                            borderRadius: "100px",
+                            fontWeight: "bold",
+                            marginLeft: "8px",
+                          }}
+                        >
+                          フォロー
+                        </Button>
+                      </>
+                    )}
+                  </>
                 )}
               </div>
             </div>
