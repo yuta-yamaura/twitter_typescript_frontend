@@ -15,7 +15,7 @@ import { RecipientMessage } from "./RecipientMessage";
 export const DirectMessageList = () => {
   const { username } = useParams();
   const token = getAuthToken();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [chatHistory, setChatHistory] = useState<DirectMessage[]>([]);
   const [directMessage, setDirectMessage] = useState("");
@@ -48,6 +48,8 @@ export const DirectMessageList = () => {
       setChatHistory(res.data);
     } catch (error) {
       messageApi.error("メッセージの取得に失敗しました");
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -82,9 +84,7 @@ export const DirectMessageList = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
     fetchDMHistory();
-    setIsLoading(false);
   }, [chatHistory]);
 
   if (isLoading) return <Loading />;
@@ -102,8 +102,7 @@ export const DirectMessageList = () => {
                 {chat.sender.username !== username && chat.content !== null ? (
                   <SenderMessage chat={chat} />
                 ) : (
-                  chat.content !== null && 
-                    <RecipientMessage chat={chat} />
+                  chat.content !== null && <RecipientMessage chat={chat} />
                 )}
               </div>
             ))}

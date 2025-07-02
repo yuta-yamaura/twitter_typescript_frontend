@@ -8,13 +8,12 @@ import { Link } from "react-router-dom";
 import { Loading } from "../loading/Loading";
 
 export const MessageUserList = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [messageGroup, setMessageGroup] = useState<MessageGroup[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
 
   const fetchDMHistory = useCallback(async () => {
     try {
-      setIsLoading(true);
       const res = await authInstance.get(`/api/message-group/`);
       setMessageGroup(res.data);
     } catch (error) {
