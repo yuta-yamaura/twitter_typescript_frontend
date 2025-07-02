@@ -1,13 +1,15 @@
-import { Layout, theme } from "antd";
+import { Flex, Layout, theme } from "antd";
 import { useEffect, useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { decodeJWT, getAuthToken, removeToken } from "../../../utils/auth";
+import { useLocation } from "react-router-dom";
 
 type BaselayoutProps = {
   children?: ReactNode;
 };
 
 export const Baselayout = ({ children }: BaselayoutProps) => {
+  const location = useLocation().pathname;
   const { Header, Footer, Content } = Layout;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState<number | undefined>(undefined);
@@ -39,6 +41,21 @@ export const Baselayout = ({ children }: BaselayoutProps) => {
     }
   }, []); // 依存配列に空配列を指定し無限ループを防ぐ
 
+  const renderHeaderContnet = () => {
+    switch (location) {
+      case "/notification":
+        return <Flex>通知</Flex>;
+      case "/message":
+        return <Flex>メッセージ</Flex>;
+      case "/bookmark":
+        return <Flex>ブックマーク</Flex>;
+      case `/user/${userId}`:
+        return <Flex>プロフィール</Flex>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div
       style={{
@@ -58,12 +75,25 @@ export const Baselayout = ({ children }: BaselayoutProps) => {
           handleCancel={handleCancel}
         />
         <Layout>
-          <Header style={{ padding: 0, background: colorBgContainer }} />
+          <Header
+            style={{
+              padding: 0,
+              background: colorBgContainer,
+              display: "flex",
+              justifyContent: "flex-start",
+              fontSize: "24px",
+              paddingLeft: "24px",
+              fontWeight: "bold",
+            }}
+          >
+            {renderHeaderContnet()}
+          </Header>
           <Content
             style={{
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
-              padding: 24,
+              paddingLeft: 24,
+              paddingRight: 24,
               overflow: "auto",
             }}
           >

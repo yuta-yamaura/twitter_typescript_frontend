@@ -130,7 +130,7 @@ export const UserProfile = () => {
 
   const createMessageGroup = async (id: number) => {
     try {
-      await instance.post(`/api/message-group-create/${id}/`);
+      await instance.post(`/api/message-groups/${id}/`);
     } catch (error) {
       messageApi.error("メッセージグループを作成できませんでした");
     }

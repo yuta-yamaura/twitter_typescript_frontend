@@ -2,16 +2,16 @@ import type { User } from "./User";
 
 export type DirectMessage = {
   id: number;
+  room: number;
   sender: User;
-  recipient: User;
   content: string;
   createdAt: string;
 };
 
 export type MessageGroup = {
   id: number;
-  sender: User;
-  recipient: User;
+  room: number;
+  user: User;
   content: string;
   createdAt: string;
 };

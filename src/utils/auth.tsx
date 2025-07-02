@@ -23,7 +23,7 @@ export const removeToken = () => {
   delete instance.defaults.headers.common["Authorization"];
 };
 
-// DM用にCookieに保存したトークンをデコードする処理
+// サイドバーのプロフィール用にCookieに保存したトークンをデコードする処理
 export const decodeJWT = (token: string): { [key: string]: any } | null => {
   try {
     const base64Url = token.split(".")[1];
