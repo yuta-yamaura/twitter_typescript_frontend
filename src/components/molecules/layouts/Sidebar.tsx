@@ -10,6 +10,7 @@ import { UserDelete } from "../../atoms/Icon/UserDelete";
 import { UserDeleteModal } from "../modals/UserDeleteModal";
 import { UserOutline } from "../../atoms/Icon/UserOutline";
 import { HomeOutline } from "../../atoms/Icon/HomeOutline";
+import { Logout } from "../../atoms/Icon/Logout";
 
 type SidebarProps = {
   userId?: number;
@@ -74,7 +75,7 @@ export const Sidebar = ({
         </Flex>
         <Flex style={{ paddingTop: "12px" }}>
           <Link
-            to={`/bookmark`}
+            to={"/bookmark"}
             style={{ textDecoration: "None", color: "inherit" }}
           >
             <Button type="text" style={{ borderRadius: "25px" }}>
@@ -94,6 +95,19 @@ export const Sidebar = ({
               <UserOutline width="28px" height="28px" />
               <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
                 プロフィール
+              </Space>
+            </Button>
+          </Link>
+        </Flex>
+        <Flex style={{ paddingTop: "12px" }}>
+          <Link
+            to={"/login"}
+            style={{ textDecoration: "None", color: "inherit" }}
+          >
+            <Button type="text" style={{ borderRadius: "25px" }}>
+              <Logout width="28px" height="28px" />
+              <Space style={{ fontSize: "25px", marginLeft: "12px" }}>
+                ログアウト
               </Space>
             </Button>
           </Link>

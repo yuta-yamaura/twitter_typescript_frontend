@@ -32,6 +32,7 @@ export const SignUpPageView = ({}) => {
       const response = await instance.post("/api/users/register/", data);
       setAuthToken({ token: response.data });
       messageApi.success("登録が完了しました");
+      window.location.href = "/login";
     } catch (error) {
       console.error("登録ERROR:", error);
       messageApi.error("ユーザーの作成に失敗しました");
