@@ -38,7 +38,7 @@ export const Sidebar = ({
           <XLogoView width="30px" height="30px" />
         </Flex>
         <Flex style={{ paddingTop: "12px" }}>
-          <Link to={`/`} style={{ textDecoration: "None", color: "inherit" }}>
+          <Link to={"/"} style={{ textDecoration: "None", color: "inherit" }}>
             <Button type="text" style={{ borderRadius: "25px" }}>
               <HomeOutline width="28px" height="28px" />
               <Space style={{ fontSize: "25px", marginLeft: "12px" }}>

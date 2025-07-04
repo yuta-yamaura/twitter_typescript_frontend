@@ -9,7 +9,7 @@ type BaselayoutProps = {
 };
 
 export const Baselayout = ({ children }: BaselayoutProps) => {
-  const location = useLocation().pathname;
+  const { pathname } = useLocation();
   const { Header, Footer, Content } = Layout;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState<number | undefined>(undefined);
@@ -33,16 +33,15 @@ export const Baselayout = ({ children }: BaselayoutProps) => {
 
   useEffect(() => {
     const token = getAuthToken();
-    if (token) {
-      const decodeToken = decodeJWT(token);
-      if (decodeToken && decodeToken.user_id) {
-        setUserId(decodeToken.user_id);
-      }
+    if (!token) return;
+    const decodeToken = decodeJWT(token);
+    if (decodeToken && decodeToken.user_id) {
+      setUserId(decodeToken.user_id);
     }
   }, []); // 依存配列に空配列を指定し無限ループを防ぐ
 
   const renderHeaderContnet = () => {
-    switch (location) {
+    switch (pathname) {
       case "/notification":
         return <Flex>通知</Flex>;
       case "/message":
