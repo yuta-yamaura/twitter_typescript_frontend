@@ -10,7 +10,7 @@ const sizeInMB = (sizeInBytes: number, decimalsNum = 2) => {
 };
 
 export const CommentSchema = z.object({
-  comment: z.string(),
+  content: z.string(),
   image: z
     .custom<FileList>() // z.inferでSchemaを定義したときに型がつくようにするため
     .optional()

@@ -12,9 +12,10 @@ import { CommentCreateModal } from "../modals/CommentCreateModal";
 import type { PaginatedResponse } from "../../../types/PaginatedResponse";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 import { Retweet } from "../../atoms/Icon/Retweet";
-import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { FillLike } from "../../atoms/Icon/FillLike";
 import { OutLineLike } from "../../atoms/Icon/OutLineLike";
+import { BookmarkFill } from "../../atoms/Icon/BookmarkFill";
+import { BookmarkOutline } from "../../atoms/Icon/BookmarkOutline";
 
 export const TweetsList = () => {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -38,6 +39,7 @@ export const TweetsList = () => {
   );
   const [retweeted, setRetweeted] = useState<{ [key: number]: boolean }>({});
   const [likeed, setLikeed] = useState<{ [key: number]: boolean }>({});
+  const [bookmarked, setBookmarked] = useState<{ [key: number]: boolean }>({});
 
   const handleOpenChange = (tweetId: number, newOpen: boolean) => {
     setOpenPopovers((prev) => ({
@@ -60,6 +62,13 @@ export const TweetsList = () => {
     }));
   };
 
+  const handleBookmarkChange = (tweetId: number, bookmark: boolean) => {
+    setBookmarked((prev) => ({
+      ...prev,
+      [tweetId]: bookmark,
+    }));
+  };
+
   const fetchTweet = async (page: number) => {
     try {
       const offset = (page - 1) * pageSize;
@@ -79,6 +88,7 @@ export const TweetsList = () => {
     try {
       await authInstance.post(`/api/tweets/${id}/retweet/`);
       handleRetweetChange(id, !retweeted[id]);
+      messageApi.success("リツイートしました");
       fetchTweet(currentPage);
     } catch (error) {
       messageApi.error("リツイートできませんでした");
@@ -99,6 +109,7 @@ export const TweetsList = () => {
     try {
       await authInstance.post(`/api/tweets/${id}/like/`);
       handleLikeChange(id, !likeed[id]);
+      messageApi.success("いいねしました");
       fetchTweet(currentPage);
     } catch (error) {
       messageApi.error("いいねできませんでした");
@@ -112,6 +123,27 @@ export const TweetsList = () => {
       fetchTweet(currentPage);
     } catch (error) {
       messageApi.error("いいねを削除できませんでした");
+    }
+  };
+
+  const handleBookmark = async (id: number) => {
+    try {
+      await authInstance.post(`/api/tweets/${id}/bookmark/`);
+      handleBookmarkChange(id, !bookmarked[id]);
+      messageApi.success("ブックマークしました");
+      fetchTweet(currentPage);
+    } catch (error) {
+      messageApi.error("ブックマークできませんでした");
+    }
+  };
+
+  const handleUnBookmark = async (id: number) => {
+    try {
+      await authInstance.delete(`/api/tweets/${id}/unbookmark/`);
+      handleBookmarkChange(id, !bookmarked[id]);
+      fetchTweet(currentPage);
+    } catch (error) {
+      messageApi.error("ブックマークを削除できませんでした");
     }
   };
 
@@ -195,7 +227,7 @@ export const TweetsList = () => {
                         }}
                       >
                         <div>
-                          <strong>
+                          <strong style={{ fontSize: "16px" }}>
                             {tweet.user.accountName ?? "DefaultName"}
                           </strong>
                           <span> @{tweet.user.username}</span>
@@ -381,15 +413,47 @@ export const TweetsList = () => {
                             {tweet?.likeCount === 0 ? "" : tweet.likeCount}
                           </div>
                         )}
-                        <div style={{ paddingTop: "8px" }}>
-                          <Button
-                            type="text"
-                            onClick={() => {}}
-                            style={{ padding: 0 }}
+                        {tweet.loginUserBookmarked ? (
+                          <div
+                            style={{
+                              paddingTop: "8px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
                           >
-                            <XLogoView width={"22px"} height={"22px"} />
-                          </Button>
-                        </div>
+                            <Button
+                              type="text"
+                              onClick={() => {
+                                handleUnBookmark(tweet.id);
+                              }}
+                              style={{ padding: 0 }}
+                            >
+                              <BookmarkFill
+                                width={"22px"}
+                                height={"22px"}
+                                style={{ color: "#00bfff" }}
+                              />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              paddingTop: "8px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Button
+                              type="text"
+                              onClick={() => {
+                                handleBookmark(tweet.id);
+                              }}
+                              style={{ padding: 0 }}
+                            >
+                              <BookmarkOutline width={"22px"} height={"22px"} />
+                            </Button>
+                          </div>
+                        )}
                       </Flex>
                     </div>
                   </div>

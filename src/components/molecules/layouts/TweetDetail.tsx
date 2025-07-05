@@ -14,9 +14,11 @@ import type { PaginatedResponse } from "../../../types/PaginatedResponse";
 import { DashOutline } from "../../atoms/Icon/DashOutline";
 import { useTweetDelete } from "../../../utils/useTweetDelete";
 import { Retweet } from "../../atoms/Icon/Retweet";
-import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { FillLike } from "../../atoms/Icon/FillLike";
 import { OutLineLike } from "../../atoms/Icon/OutLineLike";
+import { BookmarkFill } from "../../atoms/Icon/BookmarkFill";
+import { BookmarkOutline } from "../../atoms/Icon/BookmarkOutline";
+import { Link } from "react-router-dom";
 
 export const TweetDetail = () => {
   const { id } = useParams();
@@ -92,24 +94,26 @@ export const TweetDetail = () => {
       ) : (
         <Baselayout>
           {contextHolder}
-          <Flex
-            key={id}
+          <div
             style={{
               border: "solid 1px",
               borderColor: "#f5f5f5",
+              width: "100%",
+              maxWidth: "600px",
+              margin: "0 auto",
             }}
           >
-            <Flex
+            <div
               style={{
-                display: "flex",
                 padding: "12px 16px",
               }}
             >
               <div>
-                <Flex
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <Flex style={{ display: "flex" }}>
+                <div style={{ display: "flex" }}>
+                  <Link
+                    to={`/user/${tweet?.user.id}/`}
+                    style={{ textDecoration: "None", color: "inherit" }}
+                  >
                     <img
                       src={
                         tweet?.user.image
@@ -120,45 +124,56 @@ export const TweetDetail = () => {
                         width: "45px",
                         height: "45px",
                         borderRadius: "50%",
+                        marginRight: "8px",
                       }}
                     />
-                    <Flex style={{ marginLeft: "8px" }}>
-                      <strong>
-                        {tweet?.user.accountName ?? "DefaultName"}
-                      </strong>
-                      <Flex>
-                        {" "}
-                        @{tweet?.user.username && tweet.user.username}
-                      </Flex>
-                    </Flex>
-                  </Flex>
-
-                  {tweet && (
-                    <Popover
-                      content={
-                        <Flex
-                          onClick={() => deleteTweet(tweet.id)}
-                          style={{ cursor: "pointer" }}
-                        >
-                          削除
-                        </Flex>
-                      }
-                      trigger="click"
-                      open={openPopovers[tweet.id]}
-                      onOpenChange={(newOpen) =>
-                        handleOpenChange(tweet.id, newOpen)
-                      }
+                  </Link>
+                  <div style={{ width: "100%" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
                     >
-                      <Button type="text" style={{ padding: 0 }}>
-                        <DashOutline
-                          width="24px"
-                          height="24px"
-                          style={{ justifyContent: "end" }}
-                        />
-                      </Button>
-                    </Popover>
-                  )}
-                </Flex>
+                      <div>
+                        <strong style={{ fontSize: "16px" }}>
+                          {tweet?.user.accountName ?? "DefaultName"}
+                        </strong>
+                        <span>
+                          {" "}
+                          @{tweet?.user.username && tweet.user.username}
+                        </span>
+                      </div>
+
+                      {tweet && (
+                        <Popover
+                          content={
+                            <div
+                              onClick={() => deleteTweet(tweet.id)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              削除
+                            </div>
+                          }
+                          trigger="click"
+                          open={openPopovers[tweet.id]}
+                          onOpenChange={(newOpen) =>
+                            handleOpenChange(tweet.id, newOpen)
+                          }
+                        >
+                          <Button type="text" style={{ padding: 0 }}>
+                            <DashOutline
+                              width="24px"
+                              height="24px"
+                              style={{ justifyContent: "end" }}
+                            />
+                          </Button>
+                        </Popover>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 <Flex style={{ margin: "12px 0px" }}>
                   {tweet?.content && tweet.content}
                 </Flex>
@@ -276,19 +291,35 @@ export const TweetDetail = () => {
                       {tweet?.likeCount === 0 ? "" : tweet?.likeCount}
                     </div>
                   )}
-                  <div style={{ paddingTop: "8px" }}>
-                    <Button
-                      type="text"
-                      onClick={() => {}}
-                      style={{ padding: 0 }}
+                  {tweet?.loginUserBookmarked ? (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
                     >
-                      <XLogoView width={"22px"} height={"22px"} />
-                    </Button>
-                  </div>
+                      <BookmarkFill
+                        width={"22px"}
+                        height={"22px"}
+                        style={{ color: "#00bfff" }}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        paddingTop: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <BookmarkOutline width={"22px"} height={"22px"} />
+                    </div>
+                  )}
                 </Flex>
               </div>
-            </Flex>
-          </Flex>
+            </div>
+          </div>
           <div>
             {comments &&
               comments.map((comment) => (

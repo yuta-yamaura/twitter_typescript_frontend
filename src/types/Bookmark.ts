@@ -1,14 +1,13 @@
 import type { User } from "./User";
 
-export type Tweet = {
-  id: number;
+export type Bookmark = Omit<User, "name" | "isAdmin" | "tweets"> & {
   user: User;
+  id: number;
   content: string;
-  image?: string | null;
-  createdAt: string;
+  image: string;
   retweetCount?: number;
   likeCount?: number;
   loginUserRetweeted: boolean;
   loginUserLiked: boolean;
-  loginUserBookmarked: boolean;
+  createdAt: string;
 };
