@@ -4,18 +4,29 @@ import { InputField } from "../forms/InputField";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
-import { instance } from "../../../utils/client";
+import { authInstance, instance } from "../../../utils/client";
 import { getAuthToken } from "../../../utils/auth";
 import { Image } from "../../atoms/Icon/Image";
 import { TweetSchema, type TweetForm } from "../../../schema/TweetSchema";
 import { TweetsList } from "./TweetsList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loading } from "../loading/Loading";
+import type { User } from "../../../types/User";
 
 export const Addtweet = () => {
   const token = getAuthToken();
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User>();
+
+  const loginUser = async () => {
+    const res = await authInstance.get(`api/users/info/`);
+    setUser(res.data);
+  };
+
+  useEffect(() => {
+    loginUser();
+  }, []);
 
   const form = useForm<TweetForm>({
     defaultValues: {
@@ -60,12 +71,24 @@ export const Addtweet = () => {
       >
         <Flex vertical gap="middle" style={{ width: "100%" }}>
           {contextHolder}
-          <InputField
-            placeholder="いまどうしてる？"
-            name="content"
-            type="text"
-            register={form.register}
-          />
+          <Flex style={{ display: "flex" }}>
+            <img
+              src={user?.image}
+              style={{
+                width: "45px",
+                height: "45px",
+                borderRadius: "50%",
+                marginRight: "8px",
+              }}
+            />
+            <InputField
+              placeholder="いまどうしてる？"
+              name="content"
+              type="text"
+              register={form.register}
+              style={{ border: "none", fontSize: "20px" }}
+            />
+          </Flex>
           <Flex justify="space-between">
             <InputField
               name="image"
@@ -75,7 +98,11 @@ export const Addtweet = () => {
             >
               <Image width="24px" height="24px" />
             </InputField>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ borderRadius: "25px" }}
+            >
               ポストする
             </Button>
           </Flex>
