@@ -1,4 +1,4 @@
-import { Flex, message } from "antd";
+import { Flex, message, Space } from "antd";
 import { useParams, useSearchParams } from "react-router-dom";
 import { authInstance, instance } from "../../../utils/client";
 import { useEffect, useState } from "react";
@@ -236,8 +236,14 @@ export const UserProfile = () => {
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 {user?.loginUser ? (
                   <>
-                    <Button type="text" onClick={showModal}>
-                      プロフィールを編集
+                    <Button
+                      type="text"
+                      onClick={showModal}
+                      style={{ borderRadius: "25px" }}
+                    >
+                      <Space style={{ fontSize: "18px", fontWeight: "bold" }}>
+                        プロフィールを編集
+                      </Space>
                     </Button>
                     <UserProfileUpdateModal
                       user={user}
@@ -309,13 +315,17 @@ export const UserProfile = () => {
               </div>
             </div>
             <div style={{ paddingLeft: "8px", marginTop: "80px" }}>
-              <Flex style={{ fontWeight: "bold" }}>
+              <Flex style={{ fontWeight: "bold", fontSize: "24px" }}>
                 {user?.accountName ?? "DefaultName"}
               </Flex>
-              <Flex> @{user?.username && user.username}</Flex>
+              <Flex style={{ fontSize: "16px", color: "gray" }}>
+                {" "}
+                @{user?.username && user.username}
+              </Flex>
               <Flex
                 style={{
                   alignItems: "center",
+                  marginTop: "8px",
                 }}
               >
                 <Flex>{user?.selfIntroduction && user.selfIntroduction}</Flex>

@@ -12,6 +12,7 @@ import {
 } from "../../../schema/AuthorizationSchema";
 import type { z } from "zod";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const LoginPageView = ({}) => {
   const navigate = useNavigate();
@@ -85,6 +86,9 @@ export const LoginPageView = ({}) => {
                 register={form.register}
               />
               <Button htmlType="submit">ログイン</Button>
+              <Link to={"/signup"}>
+                <Button style={{ width: "100%" }}>サインアップ</Button>
+              </Link>
             </Flex>
           </form>
         </Space>
