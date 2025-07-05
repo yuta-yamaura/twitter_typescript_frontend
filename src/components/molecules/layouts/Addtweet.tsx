@@ -73,7 +73,9 @@ export const Addtweet = () => {
           {contextHolder}
           <Flex style={{ display: "flex" }}>
             <img
-              src={user?.image}
+              src={
+                user?.image ? user.image : "../../../defaultAccountImage.png"
+              }
               style={{
                 width: "45px",
                 height: "45px",

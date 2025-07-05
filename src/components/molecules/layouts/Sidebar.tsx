@@ -158,7 +158,7 @@ export const Sidebar = ({
         </Flex>
         <Flex style={{ paddingTop: "12px" }}>
           <img
-            src={user?.image}
+            src={user?.image ? user.image : "../../../defaultAccountImage.png"}
             style={{
               width: "45px",
               height: "45px",
