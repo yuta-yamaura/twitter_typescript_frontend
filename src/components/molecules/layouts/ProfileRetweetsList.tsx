@@ -5,8 +5,8 @@ import dayjs from "dayjs";
 import { Button } from "../../atoms/Button/Button";
 import { Message } from "../../atoms/Icon/Message";
 import { Retweet } from "../../atoms/Icon/Retweet";
-import { XLogoView } from "../../atoms/Icon/XLogoView";
 import { OutLineLike } from "../../atoms/Icon/OutLineLike";
+import { BookmarkOutline } from "../../atoms/Icon/BookmarkOutline";
 
 type ProfileRetweetsListProps = {
   userRetweet?: ProfileRetweet;
@@ -147,7 +147,7 @@ export const ProfileRetweetsList = ({
                           onClick={() => {}}
                           style={{ padding: 0 }}
                         >
-                          <XLogoView width={"22px"} height={"22px"} />
+                          <BookmarkOutline width={"22px"} height={"22px"} />
                         </Button>
                       </div>
                     </Flex>

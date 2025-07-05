@@ -11,6 +11,7 @@ import { UserDeleteModal } from "../modals/UserDeleteModal";
 import { UserOutline } from "../../atoms/Icon/UserOutline";
 import { HomeOutline } from "../../atoms/Icon/HomeOutline";
 import { Logout } from "../../atoms/Icon/Logout";
+import type { User } from "../../../types/User";
 
 type SidebarProps = {
   userId?: number;
@@ -18,6 +19,7 @@ type SidebarProps = {
   handleOpenModal: () => void;
   handleOk: () => void;
   handleCancel: () => void;
+  user?: User;
 };
 
 export const Sidebar = ({
@@ -26,6 +28,7 @@ export const Sidebar = ({
   handleOpenModal,
   handleOk,
   handleCancel,
+  user,
 }: SidebarProps) => {
   return (
     <>
@@ -127,6 +130,51 @@ export const Sidebar = ({
           handleCancel={handleCancel}
           handleOk={handleOk}
         />
+        <Flex
+          style={{
+            paddingTop: "12px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            type="text"
+            style={{
+              borderRadius: "25px",
+              backgroundColor: "black",
+            }}
+          >
+            <Space
+              style={{
+                fontSize: "18px",
+                marginLeft: "12px",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              ポストする
+            </Space>
+          </Button>
+        </Flex>
+        <Flex style={{ paddingTop: "12px" }}>
+          <img
+            src={user?.image}
+            style={{
+              width: "45px",
+              height: "45px",
+              borderRadius: "50%",
+              marginRight: "8px",
+            }}
+          />
+          <Flex style={{ flexDirection: "column" }}>
+            <Flex style={{ fontSize: "18px", fontWeight: "bold" }}>
+              {user?.accountName}
+            </Flex>
+            <Flex style={{ fontSize: "16px", color: "gray" }}>
+              @{user?.username}
+            </Flex>
+          </Flex>
+        </Flex>
       </Sider>
     </>
   );
