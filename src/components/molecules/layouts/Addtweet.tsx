@@ -88,7 +88,7 @@ export const Addtweet = () => {
               name="content"
               type="text"
               register={form.register}
-              style={{ border: "none", fontSize: "20px" }}
+              style={{ border: "none", fontSize: "20px", width: "100%" }}
             />
           </Flex>
           <Flex justify="space-between">
